@@ -114,6 +114,56 @@ body {
 }
 
 
+footer {
+    background-color: black;
+    padding: 10px 20px;
+    color: beige;
+    max-width: 100%;
+    height: auto;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.footer li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.footer-left,
+.footer-right {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-right ul {
+    float: right;
+}
+
+
+.footer-bottom {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0 5px;
+    font-size: 0.85rem;
+    color: beige;
+}
+
+.footer a {
+    color: beige; 
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+    color: lightblue;    
+}
+
+
 @media screen and (max-width: 768px) {
     .nav-menu {
         flex-direction: column;
@@ -138,3 +188,4 @@ body {
         display: block;
     }
 }
+
