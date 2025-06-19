@@ -6,6 +6,14 @@ body {
     background-color: cornflowerblue;
 }
 
+:root {
+  --main-color: #1e1e2f;       
+  --accent-color: #00bcd4;    
+  --secondary-color: #f9f9f9;    
+  --text-color: #ffffff;
+  --highlight: #0b0b02;          
+}
+
 /* Header Styles */
 .top-menu {
     position: fixed;
@@ -50,6 +58,11 @@ body {
     color: lightblue; 
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
 
 /* Contact Button */
 .contact {
@@ -63,8 +76,21 @@ body {
     border-radius: 50px;
     transition: background-color 0.3s ease;
     font-family: 'Montserrat', sans-serif;;
-
 }
+
+.auth-btn {
+    font-size: 15px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.auth-btn:hover {
+  text-decoration: underline;
+}
+
 .contact:hover {
     background-color: blueviolet;
 }
@@ -76,7 +102,7 @@ body {
     color: white;
 }
 .middle{
-    position: relative;
+      position: relative;
     background-image:url(coding-difference-1.jpg); 
     background-size: cover;
     background-repeat: no-repeat;
@@ -87,7 +113,7 @@ body {
     justify-content:center;
     align-items:center;
     text-align: center;
-    overflow: hidden;
+    overflow: hidden
 }
 
 .middle::before {
@@ -106,11 +132,121 @@ body {
     z-index: 1;
 }
 
+.middle-log{
+    position: relative;
+    background-image:url(C.webp); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+    color: white;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.middle-log::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); 
+    z-index: 0;
+}
+
+.content-log {
+    position: relative;
+    z-index: 1;
+}
+
+.login-form {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form label {
+  margin-top: 15px;
+  font-weight: bold;
+  color: wheat
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  opacity: 0.4;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.login-form input[type="text"]:focus,
+.login-form input[type="password"]:focus {
+  border-color: var(--accent-color, #00bcd4);
+}
+
+.login-form input[type="submit"] {
+  margin-top: 25px;
+  padding: 12px;
+  background-color: var(--accent-color, #00bcd4);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form input[type="submit"]:hover {
+  background-color:yellow;
+  color: rgb(0, 0, 0);
+  
+}
+
 .description{
     margin-left: 200px;
     margin-right: 200px;
     font-size: 20px;
     line-height: 1.5;
+}
+
+.team{
+    display: inline-block;
+    background-color: black;
+    margin: 50px;
+    border-radius: 3%;
+    color: #ffffff;
+    padding: 20px;
+}
+
+.team h3{
+    text-align: center;
+    color: #ffffff;
+}
+
+.team-ph{
+    border-radius: 100%;
+    height: 250px;
+    padding: 30px;
+    align-items: center;
+}
+
+.team td{
+    text-align: center;
+    padding-left: 20px;
+    padding-right: ;
 }
 
 
@@ -161,6 +297,17 @@ footer {
 .footer a:hover {
     text-decoration: underline;
     color: lightblue;    
+}
+
+.fade-in{
+    opacity: 0;
+    animation: fadeIn 1.5s ease forwards;
+}
+
+@keyframes fadeIn{
+    to{
+        opacity 1;
+    }
 }
 
 
