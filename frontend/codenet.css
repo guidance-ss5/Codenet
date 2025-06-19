@@ -211,9 +211,95 @@ body {
 
 .login-form input[type="submit"]:hover {
   background-color:yellow;
-  color: rgb(0, 0, 0);
-  
+  color:black;  
 }
+
+
+.submit-form {
+  margin: 120px auto 50px auto;         /* Push form below fixed header */
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.submit-form label {
+  margin-top: 15px;
+  font-weight: bold;
+  color: wheat;
+}
+
+/* Inputs, Textarea, File Upload */
+.submit-form input[type="text"],
+.submit-form textarea,
+.submit-form input[type="submit"] {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.3s ease;
+  box-sizing: border-box;
+}
+
+
+
+.submit-form input[type="file"]    {
+  padding: 50px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.3s ease;
+  box-sizing: border-box;
+}
+
+
+/* Textarea Specific */
+.submit-form textarea {
+  resize: vertical; /* Allow only vertical resize */
+}
+
+/* Focus State */
+.submit-form input[type="text"]:focus,
+.submit-form textarea:focus,
+.submit-form input[type="file"]:focus {
+  border-color: var(--accent-color, #00bcd4);
+}
+
+/* Submit Button */
+.submit-form input[type="submit"] {
+  margin-top: 25px;
+  background-color: var(--accent-color, #00bcd4);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.submit-form input[type="submit"]:hover {
+  background-color: goldenrod;
+  color: #0b0b02;
+}
+
+.submit-form p {
+  font-size: 14px;
+  color:white;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
 
 .description{
     margin-left: 200px;
@@ -226,7 +312,7 @@ body {
     display: inline-block;
     background-color: black;
     margin: 50px;
-    border-radius: 3%;
+    border-radius: 50px;
     color: #ffffff;
     padding: 20px;
 }
@@ -247,6 +333,7 @@ body {
     text-align: center;
     padding-left: 20px;
     padding-right: ;
+    color: #ccc;
 }
 
 

@@ -9,10 +9,7 @@
 </head>
 <body>
 
-
-
-  <!-- HEADER -->
-  <header class="top-menu">
+<header class="top-menu">
     <ul>
       <li><img src="C.webp" alt="brand logo" class="logo" /></li>
       <li><a href="codenet.html" class="nav-link">HOME</a></li>
@@ -20,39 +17,40 @@
       <li><a href="submitproject.html" class="nav-link">SUBMIT PROJECT</a></li>
     </ul>
     <div class="header-right">
+      <a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>
     <a href="mailto:binupanuransith@gmail.com" class="contact">CONTACT US</a>
     </div>
     <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
   </header>
 
-
-
-
-
+  
     <section class="middle-log">
     <div class="content-log">
-        <form class="login-form">
-  <label for="username">User Name</label>
-  <input type="text" id="username" name="username" />
+        <form class="submit-form">
+  <label for="title">Title</label>
+  <input type="text" id="title" name="title" required />
 
-  <label for="password">Password</label>
-  <input type="password" id="password" name="password" />
+  <label for="subtitle">Subtitle (Optional)</label>
+  <input type="text" id="subtitle" name="subtitle" />
 
-  <input type="submit" value="Login" />
+  <label for="description">Brief Description</label>
+  <textarea id="description" name="description" rows="4" required></textarea>
+  <p>(Between 1-5000 characters)</p>
+
+  <label for="media">Upload Photos/Videos</label>
+<input type="file" id="media" name="media" accept="image/*,video/*" multiple />
+  <P>
+    Please upload clear, relevant Photos/videos which describes your project
+  </P>
+
+  <input type="submit" value="Submit Project" />
 </form>
-<p>
-  Don't have an account? <a style="color: goldenrod;" href="signup.html">sign up</a> here.
-</p>
-
-      
     </div>
   </section>
 
 
 
-
-  
-  <!-- FOOTER -->
+    <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-left">
       <ul>
