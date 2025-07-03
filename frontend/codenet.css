@@ -658,3 +658,100 @@ footer {
     align-items: flex-start;
   }
 }
+
+/* Main Swiper container styling */
+.swiper {
+    width: 100%;
+    max-width: 1800px;
+    height: 350px; 
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Individual slide styling */
+.swiper-slide {
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide-1 {
+    background-image: url('slide-pics/3.svg'); 
+}
+.slide-2 {
+    background-image: url('slide-pics/2.svg');
+}
+.slide-3 {
+    background-image: url('slide-pics/1.svg');
+}
+
+
+/* --- Custom Navigation and Pagination --- */
+
+.slideshow .swiper-button-next,
+.slideshow .swiper-button-prev {
+    background-color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: #333; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.slideshow .swiper-button-next::after,
+.slideshow .swiper-button-prev::after {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.slideshow .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 1;
+    transition: width 0.3s ease; 
+}
+
+.slideshow .swiper-pagination-bullet-active {
+    width: 30px; 
+    border-radius: 5px;
+    background-color: #000000;
+}
+
+/* Container for the text content */
+.slide-content {
+    text-align: center;
+    color: white;
+    padding: 20px;
+    position: relative; 
+    z-index: 2;         
+}
+
+.slide-content h2 {
+    transform: translateY(50px);
+    font-family: 'montserrat', sans-serif; 
+    font-size: 3rem;
+    font-weight: 650;
+    margin-bottom: 10px;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); 
+}
+
+/* Sub-heading style */
+.slide-content p {
+    transform: translateY(50px);
+    font-family: 'montserrat', sans-serif; 
+    font-size: 1rem;
+    font-weight: 400;
+    max-width: 600px; 
+    margin: 0 auto;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.slide-3 .slide-content {
+  transform: translateY(-10px);
+}
+.slide-3 .slide-content h2{
+    font-size: 4rem; 
+    }

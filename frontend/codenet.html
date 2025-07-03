@@ -5,6 +5,7 @@ git <!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CODENET</title>
   <link rel="stylesheet" href="codenet.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -33,16 +34,36 @@ git <!DOCTYPE html>
 
 
   <!-- MAIN CONTENT -->
-  <section class="middle">
-    <div class="content">
-      <p class="description">
-        <b>WELCOME TO CODENET</b><br>CodeNet is a collaborative platform built for undergraduates to showcase, sell, and contribute to academic or personal projects.
-           Whether you’ve built something cool and want to monetize it, or you're looking to join forces with others, CodeNet is your digital project marketplace and collaboration hub.
-         
-      </p>
+  <section class="swiper-section">
+    <div class="swiper slideshow">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide slide-1">
+                <div class="slide-content">
+                    <h2>Got Code? Share It.</h2>
+                    <p>Your unique solution is a lesson waiting to be learned.</p>
+                </div>
+            </div>
+            <div class="swiper-slide slide-2">
+                <div class="slide-content">
+                    <h2>Join a Gallery of Innovators.</h2>
+                    <p>Become a part of our growing library of innovative projects and get valueable feedback from your peers!</p>
+                </div>
+            </div>
+            <div class="swiper-slide slide-3">
+                <div class="slide-content">
+                    <h2>Let's Get Started!</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination Dots -->
+        <div class="swiper-pagination"></div>
+
+        <!-- Navigation Arrows -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
     </div>
   </section>
-
 
   <!-- FOOTER -->
   <footer class="footer">
@@ -75,6 +96,8 @@ git <!DOCTYPE html>
       <p>&copy; 2025 CODENET</p>
     </div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
