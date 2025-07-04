@@ -61,7 +61,7 @@ body {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 30px;
+
 }
 
 /* Contact Button */
@@ -79,12 +79,13 @@ body {
 }
 
 .auth-btn {
-    font-size: 15px;
+  font-size: 15px;
   color: white;
   text-decoration: none;
   font-weight: bold;
   transition: background-color 0.3s ease;
   font-family: 'Montserrat', sans-serif;
+  padding-right: 30px;
 }
 
 .auth-btn:hover {
@@ -755,3 +756,184 @@ footer {
 .slide-3 .slide-content h2{
     font-size: 4rem; 
     }
+
+
+.library-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.library-header h1 {
+  font-size: 42px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.library-header p {
+  font-size: 18px;
+  color: wheat;
+  margin-top: 0;
+  margin-bottom: 40px;
+}
+
+/* Search Bar Styling */
+.search-bar-container {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.search-bar-container .search-icon {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.search-bar-container input {
+  width: 100%;
+  padding: 15px 15px 15px 45px; /* Left padding for icon */
+  font-size: 16px;
+  color: wheat;
+  background-color: #111;
+  border: 1px solid #444;
+  border-radius: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-bar-container input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px rgba(7, 189, 206, 0.3);
+}
+
+/* Project Card Styling */
+.project-card {
+  display: flex;
+  background-color: var(--main-color);
+  border-radius: 10px;
+  border: 1px solid #333;
+  margin-bottom: 30px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.project-image-container {
+  flex: 0 0 320px; /* Fixed width for the image part */
+  position: relative;
+}
+
+.project-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.project-number {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.project-details {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: rgb(236, 229, 19); /* Yellow accent for title */
+  margin: 0 0 15px 0;
+}
+
+.project-author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name {
+  color: #fff;
+  font-weight: 500;
+}
+
+.project-date {
+  font-size: 13px;
+  color: wheat;
+}
+
+.project-meta {
+  margin-top: auto; /* Pushes this to the bottom of the card */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-likes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: wheat;
+  font-size: 16px;
+}
+
+.project-likes span {
+  font-size: 20px;
+  color: #ff6b6b; /* A soft red for the heart */
+}
+
+.btn-details {
+  background-color: transparent;
+  border: 1px solid wheat;
+  color: wheat;
+  padding: 8px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-details:hover {
+  background-color: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+}
+
+/* Responsive adjustments for smaller screens */
+@media screen and (max-width: 768px) {
+  .project-card {
+    flex-direction: column;
+  }
+  .project-image-container {
+    flex-basis: 200px; /* Set a fixed height for the image on mobile */
+  }
+}
