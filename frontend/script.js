@@ -23,7 +23,32 @@ const swiper = new Swiper('.swiper', {
   },
 });
 
-<<<<<<< HEAD
+// --- NEW: Trending Section Scroller Logic ---
+  const trendingRow = document.getElementById('trending-row-js');
+  const nextButton = document.getElementById('trending-next-btn');
+
+  // Check if these elements exist on the page to avoid errors
+  if (trendingRow && nextButton) {
+    nextButton.addEventListener('click', () => {
+      // Calculate how much to scroll based on the visible width of the row
+      const scrollAmount = trendingRow.clientWidth;
+
+      // Check if we are near the end of the scrollable content
+      const isAtEnd = trendingRow.scrollLeft + scrollAmount >= trendingRow.scrollWidth - trendingRow.clientWidth;
+
+      if (isAtEnd) {
+        // If at the end, scroll back to the beginning for a loop effect
+        trendingRow.scrollLeft = 0;
+      } else {
+        // Otherwise, scroll to the next "page" of items
+        trendingRow.scrollLeft += scrollAmount;
+      }
+    });
+  }
+
+;
+
+
 const counters = document.querySelectorAll('.stat-number');
 let started = false;
 
@@ -69,7 +94,6 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 scrollElements.forEach(el => observer.observe(el));
-=======
 document.addEventListener('DOMContentLoaded', function() {
   
   // Your existing Swiper initialization code should be here
@@ -89,28 +113,4 @@ document.addEventListener('DOMContentLoaded', function() {
     },
   });
 
-  // --- NEW: Trending Section Scroller Logic ---
-  const trendingRow = document.getElementById('trending-row-js');
-  const nextButton = document.getElementById('trending-next-btn');
-
-  // Check if these elements exist on the page to avoid errors
-  if (trendingRow && nextButton) {
-    nextButton.addEventListener('click', () => {
-      // Calculate how much to scroll based on the visible width of the row
-      const scrollAmount = trendingRow.clientWidth;
-
-      // Check if we are near the end of the scrollable content
-      const isAtEnd = trendingRow.scrollLeft + scrollAmount >= trendingRow.scrollWidth - trendingRow.clientWidth;
-
-      if (isAtEnd) {
-        // If at the end, scroll back to the beginning for a loop effect
-        trendingRow.scrollLeft = 0;
-      } else {
-        // Otherwise, scroll to the next "page" of items
-        trendingRow.scrollLeft += scrollAmount;
-      }
-    });
-  }
-
-});
->>>>>>> d9cef9b5728e50e4860fcf05cd6038f43bfc2c61
+})
