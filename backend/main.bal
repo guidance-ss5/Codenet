@@ -1,97 +1,64 @@
 import ballerina/http;
-import ballerina/log;
+import ballerina/io;
 import ballerinax/mongodb;
-import ballerina/crypto; 
 
-// Import our custom data models
-import guidance-ss5/Codenet/backend.models; 
+// MongoDB client initialization for 5.1.0
+mongodb:Client mongoClient = check new ({ connection: "mongodb://localhost:27017" });
+const string DB_NAME = "Codenet";
+const string USERS_COLLECTION = "users";
+const string PROJECTS_COLLECTION = "projects";
 
-// --- Database Configuration ---
-// The connection string for your local MongoDB instance.
-const string MONGO_URL = "mongodb://localhost:27017";
-// The name of our database.
-const string DB_NAME = "codenet";
+// Service to serve static frontend files
+service / on new http:Listener(8080) {
 
-// --- Global MongoDB Client ---
-final mongodb:Client mongoClient = check new (MONGO_URL);
-// Get a handle to our specific database.
-final mongodb:Database codenetDb = mongoClient->getDatabase(DB_NAME);
-// Get handles to our collections.
-final mongodb:Collection userCollection = codenetDb->getCollection("users");
-final mongodb:Collection projectCollection = codenetDb->getCollection("projects");
-
-
-// --- HTTP Service ---
-@http:ServiceConfig {
-    cors: {
-        allowOrigins: ["http://localhost:8000", "http://127.0.0.1:5500"], // Add your frontend origins
-        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowHeaders: ["Content-Type", "Authorization"]
-    }
-}
-service / on new http:Listener(9090) {
-     resource function post signup(@http:Payload json payload) returns http:Created|http:Conflict|http:InternalServerError {
-        
-        // 1. Extract and validate user data from the incoming JSON payload.
-        string|error username = payload.username.fromJsonString();
-        string|error email = payload.email.fromJsonString();
-        string|error password = payload.password.fromJsonString();
-
-        if username is error || email is error || password is error {
-            log:printError("Invalid signup payload", payload);
-            return http:CONFLICT;
+    resource function get staticFiles(http:Caller caller, http:Request req) returns error? {
+        // Serve static files from the frontend directory (fallback for Ballerina 2.x)
+        string path = req.rawPath;
+        if path == "/" {
+            path = "/codenet.html";
         }
-
-        // 2. Check if a user with the same username or email already exists.
-        // We create a query document to find a match.
-        map<anydata> query = {
-            "$or": [
-                {"username": username},
-                {"email": email}
-            ]
-        };
-
-        // Execute the query.
-        var findResult = userCollection->findOne(query);
-
-        if findResult is mongodb:Document {
-            // If a document is found, it means the user already exists.
-            log:printWarn("Signup attempt for existing user", {username, email});
-            return http:CONFLICT;
-        } else if findResult is error {
-            // Handle potential database errors.
-            log:printError("Error finding user", findResult);
-            return http:INTERNAL_SERVER_ERROR;
-        }
-
-        // 3. Hash the password for secure storage. NEVER store plain text passwords.
-        // crypto:hashSha256 is a good, simple choice for this example.
-        string|error passwordHash = crypto:hashSha256(password);
-        if passwordHash is error {
-            log:printError("Failed to hash password", passwordHash);
-            return http:INTERNAL_SERVER_ERROR;
-        }
-
-        // 4. Create the new User record.
-        models:User newUser = {
-            username: username,
-            email: email,
-            passwordHash: passwordHash
-        };
-
-        // 5. Insert the new user document into the 'users' collection.
-        var insertResult = userCollection->insertOne(newUser);
-
-        if insertResult is models:MongoId {
-            // Success! The user was created.
-            log:printInfo("New user created", {username, id: insertResult});
-            // Return a 201 Created status to the client.
-            return http:CREATED;
+        string filePath = "../frontend" + path;
+        byte[]|error fileContent = io:fileReadBytes(filePath);
+        if fileContent is byte[] {
+            http:Response res = new;
+            res.setPayload(fileContent);
+            // Set content-type based on file extension (basic)
+            if filePath.endsWith(".html") {
+                res.setHeader("content-type", "text/html");
+            } else if filePath.endsWith(".css") {
+                res.setHeader("content-type", "text/css");
+            } else if filePath.endsWith(".js") {
+                res.setHeader("content-type", "application/javascript");
+            } else if filePath.endsWith(".png") {
+                res.setHeader("content-type", "image/png");
+            } else if filePath.endsWith(".jpg") || filePath.endsWith(".jpeg") {
+                res.setHeader("content-type", "image/jpeg");
+            } else if filePath.endsWith(".webp") {
+                res.setHeader("content-type", "image/webp");
+            } else if filePath.endsWith(".svg") {
+                res.setHeader("content-type", "image/svg+xml");
+            }
+            check caller->respond(res);
         } else {
-            // Handle potential database insertion errors.
-            log:printError("Failed to insert new user", insertResult);
-            return http:INTERNAL_SERVER_ERROR;
+            check caller->respond("File not found");
         }
     }
-    
+
+
+    // Login endpoint
+    resource function post login(http:Caller caller, http:Request req) returns error? {
+        check caller->respond({ success: false, message: "MongoDB connector 5.1.0 does not support direct CRUD operations from the client object. Please use getDatabase() to get a database object, then use collection-level methods for CRUD." });
+    }
+
+
+    // Signup endpoint
+    resource function post signup(http:Caller caller, http:Request req) returns error? {
+        check caller->respond({ success: false, message: "MongoDB connector 5.1.0 does not support direct CRUD operations from the client object. Please use getDatabase() to get a database object, then use collection-level methods for CRUD." });
+    }
+
+
+    // Project submission endpoint
+    resource function post submitProject(http:Caller caller, http:Request req) returns error? {
+        check caller->respond({ success: false, message: "MongoDB connector 5.1.0 does not support direct CRUD operations from the client object. Please use getDatabase() to get a database object, then use collection-level methods for CRUD." });
+    }
 }

@@ -1,19 +1,11 @@
 [package]
+org = "guidance555codenet"
+name = "backend"
 version = "0.1.0"
 distribution = "2201.12.6"
 
 [build-options]
 observabilityIncluded = true
 
-[package]
-version = "0.1.0"
-distribution = "2201.12.6"
-org = "guidance-ss5/Codenet"  
-name = "codenet_backend" 
-
-[build-options]
-observabilityIncluded = true
-
-# Add this dependency section
 [dependencies]
-"ballerinax/mongodb" = "1.10.0"
+"ballerinax/mongodb" = "5.1.0"
