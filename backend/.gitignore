@@ -1,11 +1,15 @@
-# Ballerina generates this directory during the compilation of a package.
-# It contains compiler-generated artifacts and the final executable if this is an application package.
-target/
+# .gitignore file inside the /backend folder
 
-# Ballerina maintains the compiler-generated source code here.
-# Remove this if you want to commit generated sources.
-generated/
+# Ballerina build artifacts
+/target/
 
-# Contains configuration values used during development time.
-# See https://ballerina.io/learn/provide-values-to-configurable-variables/ for more details.
-Config.toml
+# Java build artifacts
+/java_hasher/target/
+
+# Ballerina bindgen generated code
+/passwordhasher/
+
+# IDE files
+.idea/
+.vscode/
+*.iml

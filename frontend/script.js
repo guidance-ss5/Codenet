@@ -1,22 +1,15 @@
 // Initialize Swiper
 const swiper = new Swiper('.swiper', {
   slidesPerView: 1,
-  
   loop: true,
-
-  // Autoplay settings
   autoplay: {
-    delay: 4000, 
-    disableOnInteraction: false, 
+    delay: 4000,
+    disableOnInteraction: false,
   },
-
-  // Configuration for pagination
   pagination: {
     el: '.slideshow .swiper-pagination',
-    clickable: true, 
+    clickable: true,
   },
-
-  // Configuration for navigation buttons
   navigation: {
     nextEl: '.slideshow .swiper-button-next',
     prevEl: '.slideshow .swiper-button-prev',
@@ -94,23 +87,56 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 scrollElements.forEach(el => observer.observe(el));
-document.addEventListener('DOMContentLoaded', function() {
-  
-  // Your existing Swiper initialization code should be here
-  const swiper = new Swiper('.slideshow', {
-    loop: true,
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false,
-    },
-  });
+// No need to re-initialize Swiper in DOMContentLoaded, already initialized above
+const loginForm = document.querySelector('.login-form'); // Make sure your login form has this class
 
-})
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function (event) {
+            // Prevent the default browser form submission
+            event.preventDefault();
+
+            // Get the username and password from the form fields
+            const usernameInput = document.getElementById('username'); // Ensure your input has this ID
+            const passwordInput = document.getElementById('password'); // Ensure your input has this ID
+            
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+
+            // Prepare the data to send to the backend
+            const loginData = {
+                username: username,
+                password: password
+            };
+
+            try {
+                // Send the data to the /api/login endpoint
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                if (response.ok) {
+                    // If login is successful (status 200-299)
+                    const data = await response.json();
+                    
+                    // Store the token in the browser's local storage
+                    localStorage.setItem('jwtToken', data.token);
+
+                    alert('Login successful!');
+                    // Redirect to the user's profile page or homepage
+                    window.location.href = '/userprofile.html'; // Or '/codenet.html'
+                    
+                } else {
+                    // If login fails (e.g., status 401 Unauthorized)
+                    alert('Login failed. Please check your username and password.');
+                }
+            } catch (error) {
+                // Handle network errors, etc.
+                console.error('An error occurred during login:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    }
