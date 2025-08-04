@@ -3,7 +3,8 @@ package com.codenet.codenetbackend.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,8 +14,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/upload")
-@Slf4j
 public class FileUploadController {
+    private static final Logger log = LoggerFactory.getLogger(FileUploadController.class);
 
     private static final String UPLOAD_DIR = "uploads/";
 

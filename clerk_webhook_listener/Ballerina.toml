@@ -1,0 +1,13 @@
+[package]
+org = "codenet"
+name = "clerk_webhook_listener"
+version = "1.0.0"
+
+[build-options]
+observabilityIncluded = true
+
+[[platform.java11.dependency]]
+path = "./libs/java-jwt-4.4.0.jar"
+
+[[platform.java11.dependency]]
+path = "./libs/jwks-rsa-0.22.1.jar"
