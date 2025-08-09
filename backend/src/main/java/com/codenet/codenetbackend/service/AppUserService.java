@@ -3,6 +3,7 @@ package com.codenet.codenetbackend.service;
 import com.codenet.codenetbackend.model.AppUser;
 import com.codenet.codenetbackend.repository.AppUserRepository;
 import org.springframework.stereotype.Service;
+import java.util.List;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -34,5 +35,18 @@ public class AppUserService {
 
     public void deleteUser(String id) {
         appUserRepository.deleteById(id);
+    }
+    public List<AppUser> getAllActiveUsers() {
+        // Placeholder: implement logic for active users
+        return appUserRepository.findAll();
+    }
+
+    public void deactivateUser(String id) {
+        // Placeholder: implement logic for deactivating user
+    }
+
+    public long getTotalActiveUsers() {
+        // Placeholder: implement logic for counting active users
+        return appUserRepository.count();
     }
 }
