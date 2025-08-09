@@ -31,6 +31,7 @@
 
 
     <section class="middle-log">
+    <div id="auth-container"></div> 
     <div class="content-log">
         <form class="login-form">
   <label for="username">User Name</label>
@@ -45,7 +46,7 @@
   Don't have an account? <a style="color: goldenrod;" href="signup.html">sign up</a> here.
 </p>
 
-      
+     
     </div>
   </section>
 
@@ -84,6 +85,19 @@
       <p>&copy; 2025 CODENET</p>
     </div>
   </footer>
+
+  <script async defer 
+src="https://YOUR_CLERK_PUBLISHABLE_KEY_DOMAIN/__clerk/js/clerk.browser.js" data-clerk-publishablekey="pk_live_YOUR_CLERK_PUBLISHABLE_KEY"></script> 
+<script> 
+  window.onload = function() { 
+    if (window.Clerk && window.Clerk.isReady()) { 
+      // For login page 
+      Clerk.mountSignIn(document.getElementById('auth-container')); 
+      // For signup page 
+      // Clerk.mountSignUp(document.getElementById('auth-container')); 
+    } 
+  }; 
+</script>
 
 </body>
 </html>

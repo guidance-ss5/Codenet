@@ -123,5 +123,75 @@
     </div>
   </footer>
 
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const projectList = document.querySelector(".project-list");
+    const searchInput = document.querySelector(".search-bar-container input");
+
+    // Fetch and render projects
+    function fetchProjects(searchQuery = "") {
+        let url = "/api/projects";
+        if (searchQuery) {
+            url += `?search=${encodeURIComponent(searchQuery)}`;
+        }
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                projectList.innerHTML = ""; // Clear old projects
+
+                if (data.length === 0) {
+                    projectList.innerHTML = "<p>No projects found.</p>";
+                    return;
+                }
+
+                data.forEach((project, index) => {
+                    const card = document.createElement("article");
+                    card.classList.add("project-card");
+
+                    card.innerHTML = `
+                        <div class="project-image-container">
+                            <img src="${project.imageUrl || 'placeholder.jpg'}" alt="${project.title}" />
+                            <span class="project-number">#${String(index + 1).padStart(2, '0')}</span>
+                        </div>
+                        <div class="project-details">
+                            <h2 class="project-title">${project.title}</h2>
+                            <div class="project-author-info">
+                                <img src="${project.authorAvatar || 'default-avatar.png'}" alt="${project.author}" class="author-avatar" />
+                                <div class="author-text">
+                                    <span class="author-name">${project.author}</span>
+                                    <span class="project-date">🗓️ ${new Date(project.date).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                            <div class="project-meta">
+                                <div class="project-likes">
+                                    <span>♡</span> ${project.likes || 0}
+                                </div>
+                                <a href="/projects/${project.id}" class="btn-details">View Details</a>
+                            </div>
+                        </div>
+                    `;
+                    projectList.appendChild(card);
+                });
+            })
+            .catch(err => {
+                console.error("Error fetching projects:", err);
+                projectList.innerHTML = "<p>Failed to load projects.</p>";
+            });
+    }
+
+    // Initial load
+    fetchProjects();
+
+    // Search functionality (on Enter key press)
+    searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            fetchProjects(searchInput.value.trim());
+        }
+    });
+});
+</script>
+
+
 </body>
 </html>

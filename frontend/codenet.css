@@ -9,19 +9,11 @@ body {
 
 
 :root {
-<<<<<<< HEAD
   --main-color: #1e1e2f;
   --accent-color: #00bcd4;
   --secondary-color: #f9f9f9;
   --text-color: #fff;
   --highlight: #0b0b02;
-=======
-  --main-color: #1b1b2f;       
-  --accent-color: rgb(44, 172, 189);    
-  --secondary-color: #f9f9f9;    
-  --text-color: #ffffff;
-  --highlight: #0b0b02;          
->>>>>>> 16e166122a363a163a8d3e8b9ad2aa63154b550e
 }
 
 
