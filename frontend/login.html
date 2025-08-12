@@ -31,12 +31,30 @@
 
 
     <section class="middle-log">
+    <div id="auth-container"></div> 
     <div class="content-log">
+<<<<<<< HEAD
         <!-- Clerk Authentication Container -->
         <div id="auth-container"></div>
         <p>
           Don't have an account? <a style="color: goldenrod;" href="signup.html">sign up</a> here.
         </p>
+=======
+        <form class="login-form">
+  <label for="username">User Name</label>
+  <input type="text" id="username" name="username" />
+
+  <label for="password">Password</label>
+  <input type="password" id="password" name="password" />
+
+  <input type="submit" value="Login" />
+</form>
+<p>
+  Don't have an account? <a style="color: goldenrod;" href="signup.html">sign up</a> here.
+</p>
+
+     
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
     </div>
   </section>
 
@@ -76,6 +94,7 @@
     </div>
   </footer>
 
+<<<<<<< HEAD
   <script>
     window.onload = function() {
       // Show login form
@@ -101,6 +120,20 @@
       }
     };
   </script>
+=======
+  <script async defer 
+src="https://YOUR_CLERK_PUBLISHABLE_KEY_DOMAIN/__clerk/js/clerk.browser.js" data-clerk-publishablekey="pk_live_YOUR_CLERK_PUBLISHABLE_KEY"></script> 
+<script> 
+  window.onload = function() { 
+    if (window.Clerk && window.Clerk.isReady()) { 
+      // For login page 
+      Clerk.mountSignIn(document.getElementById('auth-container')); 
+      // For signup page 
+      // Clerk.mountSignUp(document.getElementById('auth-container')); 
+    } 
+  }; 
+</script>
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
 </body>
 </html>

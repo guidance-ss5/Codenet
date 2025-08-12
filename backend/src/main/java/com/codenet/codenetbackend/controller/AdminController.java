@@ -4,17 +4,19 @@ import com.codenet.codenetbackend.model.AppUser;
 import com.codenet.codenetbackend.model.Project;
 import com.codenet.codenetbackend.service.AppUserService;
 import com.codenet.codenetbackend.service.ProjectService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
-@Slf4j
 public class AdminController {
+    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private final ProjectService projectService;
     private final AppUserService appUserService;

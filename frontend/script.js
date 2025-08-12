@@ -140,3 +140,121 @@ const loginForm = document.querySelector('.login-form'); // Make sure your login
             }
         });
     }
+
+    document.querySelector('.submit-form').addEventListener('submit', async function(e) { 
+    e.preventDefault(); 
+ 
+    const authToken = await getAuthToken(); 
+    if (!authToken) { 
+        alert('Please log in to submit a project.'); 
+        window.location.href = 'login.html'; 
+        return; 
+    } 
+ 
+    const title = document.getElementById('title').value; 
+    const subtitle = document.getElementById('subtitle').value; 
+    const description = document.getElementById('description').value; 
+    const mediaFiles = document.getElementById('media').files; 
+ 
+    const formData = new FormData(); 
+    // Append project details as a JSON string 
+    const projectData = { title, subtitle, description }; 
+    formData.append('project', new Blob([JSON.stringify(projectData)], { type: 'application/json' 
+})); 
+ 
+    // Append media files 
+    for (let i = 0; i < mediaFiles.length; i++) { 
+        formData.append('media', mediaFiles[i]); 
+    } 
+ 
+    try { 
+        const response = await fetch('http://localhost:8080/api/projects', { // Replace with your backend URL 
+            method: 'POST', 
+            headers: { 
+                'Authorization': `Bearer ${authToken}` 
+            }, 
+            body: formData // No 'Content-Type' header needed for FormData; browser sets it 
+        }); 
+ 
+        if (response.ok) { 
+            alert('Project submitted successfully!'); 
+            // Clear form or redirect 
+            this.reset(); 
+        } else { 
+            const error = await response.json(); 
+            alert(`Failed to submit project: ${error.message || response.statusText}`); 
+        } 
+    } catch (error) { 
+        console.error('Error submitting project:', error); 
+        alert('An error occurred while submitting the project.'); 
+    } 
+}); 
+
+// Fetch and update trending projects
+async function fetchTrendingProjects() {
+  try {
+    const res = await fetch('/api/trending');
+    if (!res.ok) throw new Error('Failed to fetch trending projects');
+    const projects = await res.json();
+
+    const trendingRow = document.getElementById('trending-row-js');
+    trendingRow.innerHTML = ''; // Clear existing
+
+    projects.forEach(project => {
+      const article = document.createElement('article');
+      article.classList.add('trending-item');
+      article.innerHTML = `
+        <a href="${project.url || '#'}" class="trending-poster" title="${project.title}">
+          <img src="${project.image}" alt="${project.title}">
+        </a>
+      `;
+      trendingRow.appendChild(article);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Animate stat counters to count up smoothly
+function animateCount(element, target) {
+  let count = 0;
+  const increment = target / 100; // Adjust for speed
+  const interval = setInterval(() => {
+    count += increment;
+    if (count >= target) {
+      count = target;
+      clearInterval(interval);
+    }
+    element.textContent = Math.floor(count);
+  }, 20);
+}
+
+// Fetch and update stats
+async function fetchStats() {
+  try {
+    const res = await fetch('/api/stats');
+    if (!res.ok) throw new Error('Failed to fetch stats');
+    const stats = await res.json();
+
+    // Map your stats to elements
+    const mapping = {
+      projectsUploaded: document.querySelector('.stat-number[data-target="50"]'),
+      collaborators: document.querySelector('.stat-number[data-target="100"]'),
+      soldProjects: document.querySelector('.stat-number[data-target="12"]'),
+      users: document.querySelector('.stat-number[data-target="250"]'),
+    };
+
+    if (mapping.projectsUploaded) animateCount(mapping.projectsUploaded, stats.projectsUploaded);
+    if (mapping.collaborators) animateCount(mapping.collaborators, stats.collaborators);
+    if (mapping.soldProjects) animateCount(mapping.soldProjects, stats.soldProjects);
+    if (mapping.users) animateCount(mapping.users, stats.users);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// On page load, fetch both
+window.addEventListener('DOMContentLoaded', () => {
+  fetchTrendingProjects();
+  fetchStats();
+});

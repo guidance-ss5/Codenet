@@ -5,12 +5,13 @@ import com.codenet.codenetbackend.model.AppUser;
 import com.codenet.codenetbackend.service.AppUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/users")
-@Slf4j
 public class AppUserController {
+    private static final Logger log = LoggerFactory.getLogger(AppUserController.class);
     private final AppUserService appUserService;
     public AppUserController(AppUserService appUserService) {
         this.appUserService = appUserService;
