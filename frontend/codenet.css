@@ -316,8 +316,13 @@ body {
 }
 
 .content-log {
-    position: relative;
-    z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  position: relative;
+  z-index: 1;
 }
 
 .login-form {
@@ -1619,23 +1624,35 @@ body {
 }
 
 /* Development mode forms */
+/* Center the form vertically and horizontally */
+.auth-center-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .dev-login-form, .dev-signup-form {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 40px;
-  background: rgba(0, 0, 0, 0.85);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
+  width: 100%;
+  max-width: 420px;
+  padding: 48px 36px 36px 36px;
+  background: rgba(20, 20, 20, 0.85);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .dev-login-form h2, .dev-signup-form h2 {
-  color: white;
+  color: #fff;
   text-align: center;
-  margin-bottom: 1rem;
-  font-size: 24px;
-  font-weight: 600;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .dev-login-form p, .dev-signup-form p {
@@ -1647,22 +1664,22 @@ body {
 
 .dev-login-form input, .dev-signup-form input {
   width: 100%;
-  padding: 16px 20px;
-  margin-bottom: 1rem;
+  padding: 18px 22px;
+  margin-bottom: 1.2rem;
   border: none;
-  border-radius: 25px;
-  font-size: 16px;
+  border-radius: 24px;
+  font-size: 1.1rem;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: rgba(255,255,255,0.92);
+  color: #222;
+  transition: box-shadow 0.3s, background 0.3s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
 .dev-login-form input:focus, .dev-signup-form input:focus {
   outline: none;
-  background: white;
-  box-shadow: 0 4px 20px rgba(44, 172, 189, 0.3);
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(44, 172, 189, 0.18);
   transform: translateY(-2px);
 }
 
@@ -1673,26 +1690,27 @@ body {
 
 .dev-login-form button, .dev-signup-form button {
   width: 100%;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  color: white;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #0fd1c7, #1e293b);
+  color: #fff;
   border: none;
-  border-radius: 25px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 24px;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(44, 172, 189, 0.3);
+  transition: background 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 24px rgba(44, 172, 189, 0.18);
+  margin-top: 0.5rem;
 }
 
 .dev-login-form button:hover, .dev-signup-form button:hover {
-  background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
-  transform: translateY(-3px);
-  box-shadow: 0 6px 25px rgba(44, 172, 189, 0.4);
+  background: linear-gradient(135deg, #1e293b, #0fd1c7);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(44, 172, 189, 0.22);
 }
 
 .dev-login-form a, .dev-signup-form a {
-  color: var(--accent-color);
+  color: #0fd1c7;
   text-decoration: none;
   font-weight: 500;
 }
