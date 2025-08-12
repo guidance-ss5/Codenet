@@ -6,6 +6,10 @@
   <title>User Profile - CODENET</title>
   <link rel="stylesheet" href="codenet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
+  <!-- Clerk SDK -->
+  <script async defer src="https://YOUR_CLERK_PUBLISHABLE_KEY_DOMAIN/__clerk/js/clerk.browser.js" data-clerk-publishable-key="pk_live_YOUR_CLERK_PUBLISHABLE_KEY"></script>
+  <!-- API Client -->
+  <script src="api.js"></script>
 </head>
 <body>
 
@@ -19,7 +23,9 @@
       <li><a href="aboutus.html" class="nav-link">ABOUT US</a></li>
     </ul>
     <div class="header-right">
-      <a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>
+      <div id="auth-status">
+        <a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>
+      </div>
       <a href="mailto:binupanuransith@gmail.com" class="contact">CONTACT US</a>
     </div>
     <div class="hamburger" onclick="toggleMenu()">☰</div>
@@ -33,20 +39,33 @@
     <!-- Profile Header Section -->
     <section class="profile-header-card">
       <div class="profile-picture-container">
-        <img src="User.png" alt="User Profile Picture" class="profile-picture" />
+        <img src="User.png" alt="User Profile Picture" id="profile-picture" class="profile-picture" />
       </div>
       <div class="profile-info">
-        <h1 class="profile-name">CN USER</h1>
-        <p class="profile-bio">
-         Undergraduate | Tech enthusiasist | Passionate Developer
-        </p>
+        <h1 id="profile-name" class="profile-name">Loading...</h1>
+        <p id="profile-email" class="profile-bio">Loading...</p>
         <div class="profile-stats">
           <span><b>n</b> Followers</span>
           <span><b>n</b> Following</span>
-          <span>🗓️ Joined mm yyyy</span>
+          <span id="profile-joined">🗓️ Joined...</span>
+        </div>
+        <div class="profile-actions">
+          <button id="logout-btn" class="logout-btn" style="display: none;">Logout</button>
+          <button id="load-projects-btn" class="action-btn" style="display: none;">Load My Projects</button>
         </div>
       </div>
     </section>
+
+    <!-- User's Projects Section -->
+    <section class="user-projects" id="user-projects" style="display: none;">
+      <h2>My Projects</h2>
+      <div id="projects-container">
+        <p>Loading projects...</p>
+      </div>
+    </section>
+
+    <!-- Alternative: Use Clerk's managed profile UI -->
+    <div id="user-profile-container" style="display: none;"></div>
 
     <!-- Contact Information Section -->
     <section class="profile-grid">
@@ -134,6 +153,231 @@
       <p>© 2025 CODENET</p>
     </div>
   </footer>
+
+  <script>
+    window.onload = async function() {
+      if (window.Clerk && window.Clerk.isReady()) {
+        const user = Clerk.user;
+        const authStatus = document.getElementById('auth-status');
+        
+        if (user) {
+          // User is logged in - populate profile data
+          document.getElementById('profile-name').textContent = user.fullName || user.username || 'User';
+          document.getElementById('profile-email').textContent = user.primaryEmailAddress?.emailAddress || 'No email';
+          
+          // Update profile picture if available
+          if (user.profileImageUrl) {
+            document.getElementById('profile-picture').src = user.profileImageUrl;
+          }
+          
+          // Format join date
+          if (user.createdAt) {
+            const joinDate = new Date(user.createdAt);
+            document.getElementById('profile-joined').textContent = `🗓️ Joined ${joinDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+          }
+          
+          // Update header auth status
+          authStatus.innerHTML = `<span>Welcome, ${user.firstName || user.username || 'User'}!</span>`;
+          
+          // Show logout button
+          const logoutBtn = document.getElementById('logout-btn');
+          logoutBtn.style.display = 'inline-block';
+          logoutBtn.onclick = () => {
+            Clerk.signOut().then(() => {
+              window.location.href = 'login.html';
+            });
+          };
+          
+          // Show load projects button
+          const loadProjectsBtn = document.getElementById('load-projects-btn');
+          loadProjectsBtn.style.display = 'inline-block';
+          loadProjectsBtn.onclick = loadUserProjects;
+          
+          // Test backend connection
+          testBackendConnection();
+          
+          // Option: Use Clerk's managed profile UI instead
+          // Uncomment the next line to use Clerk's managed profile component
+          // Clerk.mountUserProfile(document.getElementById('user-profile-container'));
+          // document.querySelector('.profile-header-card').style.display = 'none';
+          // document.getElementById('user-profile-container').style.display = 'block';
+          
+        } else {
+          // User not logged in, redirect to login
+          window.location.href = 'login.html';
+        }
+      } else {
+        // Fallback if Clerk is not loaded
+        setTimeout(() => {
+          if (window.Clerk && window.Clerk.isReady()) {
+            window.onload();
+          } else {
+            // If Clerk still not loaded, redirect to login
+            window.location.href = 'login.html';
+          }
+        }, 1000);
+      }
+    };
+
+    // Function to test backend connection and JWT token
+    async function testBackendConnection() {
+      try {
+        console.log('Testing backend connection...');
+        
+        // Get the JWT token
+        const token = await api.getAuthToken();
+        console.log('JWT Token obtained:', token ? 'Yes' : 'No');
+        
+        // Try to get current user from backend
+        const currentUser = await api.getCurrentUser();
+        console.log('Backend user data:', currentUser);
+        
+        // Update UI with backend data if available
+        if (currentUser) {
+          console.log('✅ Backend connection successful!');
+        }
+        
+      } catch (error) {
+        console.error('❌ Backend connection failed:', error);
+        // Show user-friendly message
+        const profileName = document.getElementById('profile-name');
+        profileName.innerHTML += ' <small>(Backend offline)</small>';
+      }
+    }
+
+    // Function to load user's projects from backend
+    // Load user projects with enhanced error handling
+    async function loadUserProjects() {
+      const projectsSection = document.getElementById('user-projects');
+      const projectsContainer = document.getElementById('projects-container');
+      
+      try {
+        projectsSection.style.display = 'block';
+        
+        // Show loading state using API client
+        api.showLoading(projectsContainer, 'Loading your projects...');
+        
+        // Check authentication first
+        const token = await api.getAuthToken();
+        if (!token) {
+          api.showError('Please log in to view your projects.');
+          projectsContainer.innerHTML = `
+            <div class="error-message">
+              <span class="error-icon">🔐</span>
+              <h3>Authentication Required</h3>
+              <p>Please log in to view your projects.</p>
+              <a href="login.html" class="retry-btn">Login</a>
+            </div>
+          `;
+          return;
+        }
+        
+        // Get user's projects from backend
+        const projects = await api.getMyProjects();
+        
+        if (projects && projects.length > 0) {
+          projectsContainer.innerHTML = projects.map(project => createUserProjectCard(project)).join('');
+          api.showSuccess(`Loaded ${projects.length} project(s)`);
+        } else {
+          projectsContainer.innerHTML = `
+            <div class="no-projects">
+              <span class="no-content-icon">📁</span>
+              <h3>No projects yet</h3>
+              <p>Start building your portfolio by creating your first project!</p>
+              <a href="submitproject.html" class="submit-link">Create Project</a>
+            </div>
+          `;
+        }
+        
+      } catch (error) {
+        console.error('Failed to load projects:', error);
+        
+        let errorMessage = 'Error loading projects. Please try again.';
+        
+        if (error.message.includes('401')) {
+          errorMessage = 'Authentication expired. Please log in again.';
+        } else if (error.message.includes('404')) {
+          errorMessage = 'Projects not found.';
+        } else if (error.message.includes('500')) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+        
+        projectsContainer.innerHTML = `
+          <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            <h3>Unable to load projects</h3>
+            <p>${errorMessage}</p>
+            <button onclick="loadUserProjects()" class="retry-btn">Retry</button>
+          </div>
+        `;
+        
+        api.showError(errorMessage);
+      }
+    }
+
+    // Create user project card
+    function createUserProjectCard(project) {
+      const statusClass = project.status ? project.status.toLowerCase() : 'unknown';
+      const statusIcon = {
+        'approved': '✅',
+        'pending': '⏳',
+        'rejected': '❌',
+        'unknown': '❓'
+      };
+      
+      return `
+        <div class="project-item" data-project-id="${project.id}">
+          <div class="project-header">
+            <h4>${project.title}</h4>
+            <span class="project-status status-${statusClass}">
+              ${statusIcon[statusClass] || '❓'} ${project.status || 'Unknown'}
+            </span>
+          </div>
+          <p class="project-description">${project.description || 'No description'}</p>
+          <div class="project-stats">
+            <span class="stat-item">❤️ ${project.likes || 0} likes</span>
+            <span class="stat-item">👁️ ${project.views || 0} views</span>
+            <span class="stat-item">📅 ${formatDate(project.uploadDate)}</span>
+          </div>
+          <div class="project-actions">
+            <button onclick="editProject('${project.id}')" class="edit-btn">Edit</button>
+            <button onclick="deleteProject('${project.id}')" class="delete-btn">Delete</button>
+            <button onclick="viewProject('${project.id}')" class="view-btn">View</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Format date helper
+    function formatDate(dateString) {
+      if (!dateString) return 'Unknown';
+      
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+      } catch (e) {
+        return 'Unknown';
+      }
+    }
+
+    // Project action functions
+    function editProject(projectId) {
+      console.log('Edit project:', projectId);
+      api.showToast('Edit functionality coming soon!', 'info');
+    }
+
+    function deleteProject(projectId) {
+      if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+        console.log('Delete project:', projectId);
+        api.showToast('Delete functionality coming soon!', 'info');
+      }
+    }
+
+    function viewProject(projectId) {
+      console.log('View project:', projectId);
+      api.showToast('Project detail view coming soon!', 'info');
+    }
+  </script>
 
 </body>
 </html>

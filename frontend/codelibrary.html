@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
+<head>    <!-- Search Bar -->
+    <div class="search-bar-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search projects..." />
+      <button id="search-btn" class="search-button">Search</button>
+      <button id="clear-search" class="clear-button" style="display: none;">Clear</button>
+    </div>
+
+    <!-- Loading/Status Messages -->
+    <div id="status-message" class="status-message"></div>
+
+    <!-- Project List -->
+    <div class="project-list" id="project-list">
+      <p>Loading projects...</p>
+    </div> charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Code Library - CODENET</title>
   <link rel="stylesheet" href="codenet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
+  <!-- Clerk SDK -->
+  <script async defer src="https://YOUR_CLERK_PUBLISHABLE_KEY_DOMAIN/__clerk/js/clerk.browser.js" data-clerk-publishable-key="pk_live_YOUR_CLERK_PUBLISHABLE_KEY"></script>
+  <!-- API Client -->
+  <script src="api.js"></script>
 </head>
 <body>
 
@@ -19,9 +36,10 @@
       <li><a href="aboutus.html" class="nav-link">ABOUT US</a></li>
     </ul>
     <div class="header-right">
-      <img src="user.png" style="height: 40px; width: 40px; border-radius: 100%; margin-left: 0px; padding: 5px; " alt="Profile pic" >
-      <a href="userprofile.html" class="auth-btn">CN USER</a>
-    <a href="mailto:binupanuransith@gmail.com" class="contact">CONTACT US</a>
+      <div id="auth-status">
+        <a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>
+      </div>
+      <a href="mailto:binupanuransith@gmail.com" class="contact">CONTACT US</a>
     </div>
     <div class="hamburger" onclick="toggleMenu()">☰</div>
   </header>
@@ -124,6 +142,283 @@
   </footer>
 
   <script>
+<<<<<<< HEAD
+    let currentSearchQuery = '';
+
+    // Initialize when page loads
+    window.addEventListener('load', function() {
+      if (window.Clerk && window.Clerk.isReady()) {
+        updateAuthStatus();
+      } else {
+        setTimeout(() => {
+          if (window.Clerk && window.Clerk.isReady()) {
+            updateAuthStatus();
+          }
+        }, 1000);
+      }
+      
+      // Load projects initially
+      loadProjects();
+      
+      // Set up search functionality
+      setupSearch();
+    });
+
+    // Update authentication status in header
+    function updateAuthStatus() {
+      const user = Clerk.user;
+      const authStatus = document.getElementById('auth-status');
+      
+      if (user) {
+        authStatus.innerHTML = `
+          <div class="user-menu">
+            <span>Welcome, ${user.firstName || user.username || 'User'}!</span>
+            <a href="userprofile.html" class="profile-link">Profile</a>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+          </div>
+        `;
+      } else {
+        authStatus.innerHTML = '<a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>';
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (window.Clerk) {
+        Clerk.signOut().then(() => {
+          updateAuthStatus();
+        });
+      }
+    }
+
+    // Setup search functionality
+    function setupSearch() {
+      const searchInput = document.getElementById('search-input');
+      const searchBtn = document.getElementById('search-btn');
+      const clearBtn = document.getElementById('clear-search');
+
+      // Search button click
+      searchBtn.addEventListener('click', performSearch);
+
+      // Enter key in search input
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          performSearch();
+        }
+      });
+
+      // Clear search button
+      clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        currentSearchQuery = '';
+        clearBtn.style.display = 'none';
+        loadProjects();
+      });
+    }
+
+    // Perform search
+    function performSearch() {
+      const query = document.getElementById('search-input').value.trim();
+      const clearBtn = document.getElementById('clear-search');
+      
+      if (query) {
+        currentSearchQuery = query;
+        clearBtn.style.display = 'inline-block';
+        loadProjects(query);
+      } else {
+        currentSearchQuery = '';
+        clearBtn.style.display = 'none';
+        loadProjects();
+      }
+    }
+
+    // Load projects from API
+    // Load projects with enhanced error handling
+    async function loadProjects(searchQuery = '') {
+      const projectList = document.getElementById('project-list');
+      const statusMessage = document.getElementById('status-message');
+      
+      try {
+        // Show loading with the new API method
+        statusMessage.innerHTML = '';
+        
+        // Use API client's loading display
+        api.showLoading(projectList, 'Loading projects...');
+
+        // Fetch projects from API
+        const projects = await api.getProjects(searchQuery);
+        
+        if (projects && projects.length > 0) {
+          // Display search results info
+          if (searchQuery) {
+            statusMessage.innerHTML = `<p>Found ${projects.length} project(s) for "${searchQuery}"</p>`;
+          } else {
+            statusMessage.innerHTML = `<p>Showing ${projects.length} approved project(s)</p>`;
+          }
+          
+          // Render projects
+          projectList.innerHTML = projects.map(project => createProjectCard(project)).join('');
+          
+          // Add click handlers for project cards
+          addProjectClickHandlers();
+          
+        } else {
+          // No projects found
+          const message = searchQuery 
+            ? `No projects found for "${searchQuery}". Try different keywords.`
+            : 'No projects available yet. Be the first to submit a project!';
+            
+          projectList.innerHTML = `
+            <div class="no-projects">
+              <span class="no-content-icon">📂</span>
+              <h3>${message}</h3>
+              ${!searchQuery ? '<a href="submitproject.html" class="submit-link">Submit Your Project</a>' : ''}
+              ${searchQuery ? '<button onclick="clearSearch()" class="clear-search-btn">Clear Search</button>' : ''}
+            </div>
+          `;
+          statusMessage.innerHTML = '';
+        }
+        
+      } catch (error) {
+        console.error('Error loading projects:', error);
+        
+        // Check if it's a network/server connection issue
+        if (error.message.includes('Failed to fetch') || error.message.includes('fetch')) {
+          // Backend is likely not running - show friendly message
+          projectList.innerHTML = `
+            <div class="no-projects">
+              <span class="no-content-icon">🔧</span>
+              <h3>Development Mode</h3>
+              <p>The backend server is not currently running.</p>
+              <p>To start the server, run: <code>mvn spring-boot:run</code> in the backend directory.</p>
+              <p>Once the server is running, refresh this page to load projects.</p>
+              <button onclick="location.reload()" class="submit-link">Refresh Page</button>
+            </div>
+          `;
+        } else {
+          // Other API errors - show retry option
+          projectList.innerHTML = `
+            <div class="error-message">
+              <span class="error-icon">⚠️</span>
+              <h3>Unable to load projects</h3>
+              <p>Please try again or check your connection.</p>
+              <button onclick="loadProjects('${searchQuery}')" class="retry-btn">Retry</button>
+            </div>
+          `;
+        }
+        statusMessage.innerHTML = '';
+      }
+    }
+
+    // Clear search function
+    function clearSearch() {
+      document.getElementById('search-input').value = '';
+      currentSearchQuery = '';
+      loadProjects();
+    }
+
+    // Create project card HTML
+    function createProjectCard(project) {
+      const imageUrl = project.mediaUrls && project.mediaUrls.length > 0 
+        ? `http://localhost:8080${project.mediaUrls[0]}`
+        : 'https://via.placeholder.com/300x200?text=No+Image';
+        
+      return `
+        <div class="project-card" data-project-id="${project.id}">
+          <div class="project-image">
+            <img src="${imageUrl}" alt="${project.title}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+          </div>
+          <div class="project-info">
+            <h3>${project.title}</h3>
+            <p class="project-subtitle">${project.subtitle || ''}</p>
+            <p class="project-description">${project.description.length > 100 ? project.description.substring(0, 100) + '...' : project.description}</p>
+            <div class="project-stats">
+              <span class="likes">❤️ ${project.likes || 0}</span>
+              <span class="views">👁️ ${project.views || 0}</span>
+              <span class="status status-${project.status.toLowerCase()}">${project.status}</span>
+            </div>
+            <div class="project-actions">
+              <button class="like-btn" onclick="likeProject('${project.id}', event)">Like</button>
+              <button class="view-btn">View Details</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Add click handlers for project cards
+    function addProjectClickHandlers() {
+      document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          // Don't trigger if clicking on buttons
+          if (e.target.tagName === 'BUTTON') return;
+          
+          const projectId = this.dataset.projectId;
+          // You can implement project detail view here
+          console.log('View project details:', projectId);
+          // For now, just show an alert
+          alert(`Project details for ID: ${projectId}\\nThis will open a project detail page in the future.`);
+        });
+      });
+    }
+
+    // Like project function with enhanced error handling
+    async function likeProject(projectId, event) {
+      event.stopPropagation(); // Prevent card click
+      
+      const likeBtn = event.target;
+      const originalText = likeBtn.textContent;
+      
+      try {
+        // Check if user is authenticated
+        const token = await api.getAuthToken();
+        if (!token) {
+          api.showError('Please log in to like projects.');
+          return;
+        }
+
+        // Show loading state
+        likeBtn.disabled = true;
+        likeBtn.textContent = 'Liking...';
+        likeBtn.classList.add('btn-loading');
+
+        const result = await api.likeProject(projectId);
+        if (result) {
+          // Show success feedback
+          api.showSuccess('Project liked!');
+          likeBtn.textContent = 'Liked ✓';
+          
+          // Refresh the project list to show updated like count
+          setTimeout(() => {
+            loadProjects(currentSearchQuery);
+          }, 1000);
+        }
+      } catch (error) {
+        console.error('Error liking project:', error);
+        
+        let errorMessage = 'Error liking project. Please try again.';
+        
+        if (error.message.includes('401')) {
+          errorMessage = 'Please log in to like projects.';
+        } else if (error.message.includes('404')) {
+          errorMessage = 'Project not found.';
+        } else if (error.message.includes('403')) {
+          errorMessage = 'You cannot like your own project.';
+        }
+        
+        api.showError(errorMessage);
+        
+      } finally {
+        // Reset button state
+        setTimeout(() => {
+          likeBtn.disabled = false;
+          likeBtn.classList.remove('btn-loading');
+          likeBtn.textContent = originalText;
+        }, 2000);
+      }
+    }
+  </script>
+=======
 document.addEventListener("DOMContentLoaded", () => {
     const projectList = document.querySelector(".project-list");
     const searchInput = document.querySelector(".search-bar-container input");
@@ -192,6 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
 </body>
 </html>

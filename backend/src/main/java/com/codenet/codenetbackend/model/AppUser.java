@@ -13,6 +13,9 @@ public class AppUser {
     private String username;
     private Instant joinedAt;
     private String role;
+<<<<<<< HEAD
+    private boolean isActive = true;
+=======
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -24,4 +27,5 @@ public class AppUser {
     public void setJoinedAt(Instant joinedAt) { this.joinedAt = joinedAt; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 }

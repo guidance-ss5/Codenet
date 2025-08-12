@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CODENET</title>
+  <title>Sign Up - CODENET</title>
   <link rel="stylesheet" href="codenet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
 </head>
@@ -31,33 +31,15 @@
 
 
     <section class="middle-log">
-    <div id="auth-container"></div>
-    <div class="content-log">
-        <form class="login-form">
-  <label for="username">Full Name</label>
-  <input type="text" id="fname" name="fname" />
-
-   <label for="password">Email/Phone number</label>
-  <input type="text" id="user" name="Email/Phone number" />
-
-  <label for="username">User Name</label>
-  <input type="text" id="username" name="username" />
-
-  <label for="password">Password</label>
-  <input type="password" id="password" name="password" />
-
-   <label for="password">Confirm Password</label>
-  <input type="password" id="password" name="password" />
-
-
-
-  <input type="submit" value="SIGNUP" />
-</form>
-<p>
-  Already an account? <a style="color: goldenrod;" href="login.html">Login</a> here.
-</p>
-
-      
+    <div class="auth-center-wrapper">
+      <div>
+        <div id="auth-container"></div>
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <p style="font-size:1.1rem; color:#fff;">
+            Already have an account? <a style="color: goldenrod;" href="login.html">Login</a> here.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -97,20 +79,34 @@
     </div>
   </footer>
 
-  <script async defer 
-src="https://YOUR_CLERK_PUBLISHABLE_KEY_DOMAIN/__clerk/js/clerk.browser
- .js" data-clerk-publishable
-key="pk_live_YOUR_CLERK_PUBLISHABLE_KEY"></script> 
-<script> 
-  window.onload = function() { 
-    if (window.Clerk && window.Clerk.isReady()) { 
-      // For login page 
-      Clerk.mountSignIn(document.getElementById('auth-container')); 
-      // For signup page 
-      // Clerk.mountSignUp(document.getElementById('auth-container')); 
-    } 
-  }; 
-</script> 
+<<<<<<< HEAD
+  <script>
+    window.onload = function() {
+      // Show signup form
+      const authContainer = document.getElementById('auth-container');
+      if (authContainer) {
+        authContainer.innerHTML = `
+          <div class="dev-signup-form">
+            <h2>Join CODENET</h2>
+            <form id="dev-signup-form">
+              <input type="text" placeholder="First Name" required>
+              <input type="text" placeholder="Last Name" required>
+              <input type="email" placeholder="Email" required>
+              <input type="password" placeholder="Password" required>
+              <button type="submit">Sign Up</button>
+            </form>
+          </div>
+        `;
+        
+        // Handle demo signup
+        document.getElementById('dev-signup-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          alert('Demo signup successful! Redirecting to home page.');
+          window.location.href = 'codenet.html';
+        });
+      }
+    };
+  </script>
 
 </body>
 </html>

@@ -1,5 +1,14 @@
 package com.codenet.codenetbackend.service;
 
+<<<<<<< HEAD
+import com.codenet.codenetbackend.model.Project;
+import com.codenet.codenetbackend.repository.ProjectRepository;
+import com.codenet.codenetbackend.exception.ProjectNotFoundException;
+import org.springframework.stereotype.Service;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+=======
 import com.codenet.codenetbackend.model.Project; 
 import com.codenet.codenetbackend.repository.ProjectRepository; 
 import org.springframework.stereotype.Service; 
@@ -8,6 +17,7 @@ import java.util.List;
 import java.util.Optional; 
 @Service 
 public class ProjectService { 
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     private final ProjectRepository projectRepository;
 
@@ -79,6 +89,13 @@ public class ProjectService {
         project.setLikes(0);
         return projectRepository.save(project);
     }
+<<<<<<< HEAD
+    public Project getProjectByIdOrThrow(String id) {
+        return projectRepository.findById(id)
+            .orElseThrow(() -> new ProjectNotFoundException("Project not found with id: " + id));
+    }
+=======
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public Optional<Project> getProjectById(String id) {
         return projectRepository.findById(id);
@@ -96,6 +113,17 @@ public class ProjectService {
     public List<Project> searchProjects(String query) {
         return projectRepository.searchProjects(query);
     }
+<<<<<<< HEAD
+    public Project updateProjectOrThrow(String id, Project updatedProject) {
+        Project project = getProjectByIdOrThrow(id);
+        project.setTitle(updatedProject.getTitle());
+        project.setSubtitle(updatedProject.getSubtitle());
+        project.setDescription(updatedProject.getDescription());
+        project.setMediaUrls(updatedProject.getMediaUrls());
+        return projectRepository.save(project);
+    }
+=======
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public Optional<Project> updateProject(String id, Project updatedProject) {
         return projectRepository.findById(id)
@@ -109,6 +137,15 @@ public class ProjectService {
                     return projectRepository.save(project);
                 });
     }
+<<<<<<< HEAD
+    public void deleteProjectOrThrow(String id) {
+        if (!projectRepository.existsById(id)) {
+            throw new ProjectNotFoundException("Project not found with id: " + id);
+        }
+        projectRepository.deleteById(id);
+    }
+=======
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public boolean deleteProject(String id) {
         if (projectRepository.existsById(id)) {
@@ -117,6 +154,14 @@ public class ProjectService {
         }
         return false;
     }
+<<<<<<< HEAD
+    public Project likeProjectOrThrow(String id) {
+        Project project = getProjectByIdOrThrow(id);
+        project.setLikes(project.getLikes() + 1);
+        return projectRepository.save(project);
+    }
+=======
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public Optional<Project> likeProject(String id) {
         return projectRepository.findById(id)
@@ -145,4 +190,58 @@ public class ProjectService {
         // This assumes a 'sold' flag or status in Project model
         return 0; // Placeholder
     }
+<<<<<<< HEAD
+    
+    public Optional<Project> rejectProject(String id, String reason) {
+        return projectRepository.findById(id)
+            .map(project -> {
+                project.setStatus("REJECTED");
+                // You could add a rejection reason field to the Project model
+                return projectRepository.save(project);
+            });
+    }
+    
+    public long getPendingProjectsCount() {
+        return projectRepository.findByStatus("PENDING").size();
+    }
+    
+    public long getApprovedProjectsCount() {
+        return projectRepository.findByStatus("APPROVED").size();
+    }
+    
+    // Additional missing methods
+    public List<Project> getProjectsByStatus(String status) {
+        return projectRepository.findByStatus(status);
+    }
+    
+    public Optional<Project> featureProject(String id) {
+        return projectRepository.findById(id)
+            .map(project -> {
+                project.setFeatured(true);
+                return projectRepository.save(project);
+            });
+    }
+    
+    public long getTotalApprovedProjects() {
+        return projectRepository.findByStatus("APPROVED").size();
+    }
+    
+    public long getTotalPendingProjects() {
+        return projectRepository.findByStatus("PENDING").size();
+    }
+    
+    public long getTotalLikes() {
+        return projectRepository.findAll().stream()
+            .mapToLong(Project::getLikes)
+            .sum();
+    }
+    
+    public long getTotalViews() {
+        return projectRepository.findAll().stream()
+            .mapToLong(Project::getViews)
+            .sum();
+    }
 }
+=======
+}
+>>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6

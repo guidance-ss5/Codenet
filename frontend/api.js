@@ -1,8 +1,11 @@
 // API Client for CODENET Backend
 class CodenetAPI {
     constructor() {
-        this.baseURL = 'http://localhost:8080/api';
+        // Use environment configuration for API base URL
+        this.baseURL = window.AppConfig ? window.AppConfig.getApiBaseUrl() : 'http://localhost:8080/api';
         this.authToken = null;
+        this.requestCount = 0;
+        this.rateLimitDelay = 1000; // Start with 1 second delay for rate limiting
     }
 
     // Authentication
@@ -17,8 +20,8 @@ class CodenetAPI {
         this.authToken = await this.getAuthToken();
     }
 
-    // Helper method for API calls
-    async makeRequest(endpoint, options = {}) {
+    // Helper method for API calls with error handling and loading states
+    async makeRequest(endpoint, options = {}, loadingElement = null, loadingMessage = 'Loading...') {
         await this.setAuthToken();
         
         const config = {
@@ -34,17 +37,158 @@ class CodenetAPI {
         }
 
         try {
+            // Show loading
+            if (loadingElement) {
+                this.showLoading(loadingElement, loadingMessage);
+            }
+
+            // Rate limiting: add delay for repeated requests
+            if (this.requestCount > 0) {
+                await new Promise(resolve => setTimeout(resolve, Math.min(this.rateLimitDelay, 5000)));
+            }
+            this.requestCount++;
+
             const response = await fetch(`${this.baseURL}${endpoint}`, config);
             
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // Handle rate limiting
+            if (response.status === 429) {
+                this.rateLimitDelay = Math.min(this.rateLimitDelay * 2, 30000); // Exponential backoff
+                throw new Error('Rate limit exceeded. Please slow down your requests.');
+            } else if (response.ok) {
+                this.rateLimitDelay = 1000; // Reset delay on success
             }
             
-            return await response.json();
+            if (!response.ok) {
+                let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorData.error || errorMessage;
+                } catch (e) {
+                    // If response is not JSON, use default message
+                }
+                
+                throw new Error(errorMessage);
+            }
+            
+            const contentType = response.headers.get('content-type');
+            let data;
+            
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                data = await response.text();
+            }
+            
+            return data;
+            
         } catch (error) {
-            console.error('API request failed:', error);
+            // Log errors in development
+            if (window.AppConfig && window.AppConfig.shouldLogDebug()) {
+                console.error('API request failed:', error);
+            }
+            
+            // Handle different error types
+            let userMessage = 'An unexpected error occurred';
+            
+            if (error.message.includes('Failed to fetch')) {
+                userMessage = 'Unable to connect to server. Please check your internet connection.';
+            } else if (error.message.includes('401')) {
+                userMessage = 'Please log in to continue.';
+            } else if (error.message.includes('403')) {
+                userMessage = 'You don\'t have permission to perform this action.';
+            } else if (error.message.includes('404')) {
+                userMessage = 'The requested resource was not found.';
+            } else if (error.message.includes('429')) {
+                userMessage = 'Too many requests. Please wait before trying again.';
+            } else if (error.message.includes('500')) {
+                userMessage = 'Server error. Please try again later.';
+            } else {
+                userMessage = error.message;
+            }
+            
+            this.showError(userMessage, loadingElement);
             throw error;
+        } finally {
+            // Hide loading
+            if (loadingElement) {
+                this.hideLoading(loadingElement);
+            }
+            
+            // Decrement request count after delay
+            setTimeout(() => {
+                this.requestCount = Math.max(0, this.requestCount - 1);
+            }, 1000);
         }
+    }
+
+    // UI Helper Methods
+    showLoading(element, message = 'Loading...') {
+        if (element) {
+            element.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <span>${message}</span>
+                </div>
+            `;
+        }
+    }
+
+    hideLoading(element) {
+        if (element && element.querySelector('.loading-spinner')) {
+            element.querySelector('.loading-spinner').remove();
+        }
+    }
+
+    showError(message, element = null) {
+        console.error('API Error:', message);
+        
+        // Show toast notification
+        this.showToast(message, 'error');
+        
+        // Show in specific element if provided
+        if (element) {
+            element.innerHTML = `
+                <div class="error-message">
+                    <i class="error-icon">⚠️</i>
+                    <span>${message}</span>
+                    <button onclick="location.reload()" class="retry-btn">Retry</button>
+                </div>
+            `;
+        }
+    }
+
+    showSuccess(message) {
+        console.log('Success:', message);
+        this.showToast(message, 'success');
+    }
+
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-content">
+                <span class="toast-icon">${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        // Add to page
+        if (!document.querySelector('.toast-container')) {
+            const container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+        
+        document.querySelector('.toast-container').appendChild(toast);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 5000);
     }
 
     // Project APIs

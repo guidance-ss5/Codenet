@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,17 +44,46 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            
+            // Security Headers (Updated for Spring Security 6.1+)
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.deny())
+                .contentTypeOptions(Customizer.withDefaults())
+                .httpStrictTransportSecurity(hstsConfig -> hstsConfig
+                    .maxAgeInSeconds(31536000)
+                    .includeSubDomains(true)
+                    .preload(true)
+                )
+            )
+            
             .authorizeHttpRequests(authorize -> authorize
                 // Public endpoints (no authentication needed)
-                .requestMatchers(HttpMethod.GET, "/api/projects/**", "/api/trending", "/api/stats", "/api/featured").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/projects/search/**", "/api/projects/trending", "/api/projects/stats").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users/sync").permitAll() // For Ballerina webhook
                 .requestMatchers(HttpMethod.DELETE, "/api/users/sync/**").permitAll() // For Ballerina webhook
-                .requestMatchers("/uploads/**").permitAll() // Allow access to uploaded files
+                
+                // Health check endpoints
+                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                
+                // Static resources and uploads
+                .requestMatchers("/uploads/**", "/static/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/error").permitAll()
+                
+                // Admin endpoints (require authentication and admin role)
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                
+                // Protected endpoints (require authentication)
+                .requestMatchers(HttpMethod.POST, "/api/projects/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/projects/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/projects/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/projects/my").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/projects/*/like").authenticated()
                 
                 // All other API endpoints require authentication
                 .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll() // Allow access to static files (frontend)
+                
+                // Allow frontend static files
+                .anyRequest().permitAll()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(clerkJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
