@@ -37,13 +37,11 @@ public class AppUserService {
     public void deleteUser(String id) {
         appUserRepository.deleteById(id);
     }
-<<<<<<< HEAD
-    
     // Additional missing methods
     public List<AppUser> getAllActiveUsers() {
         return appUserRepository.findByIsActive(true);
     }
-    
+
     public void deactivateUser(String id) {
         Optional<AppUser> userOpt = appUserRepository.findById(id);
         if (userOpt.isPresent()) {
@@ -52,22 +50,8 @@ public class AppUserService {
             appUserRepository.save(user);
         }
     }
-    
+
     public long getTotalActiveUsers() {
         return appUserRepository.findByIsActive(true).size();
-=======
-    public List<AppUser> getAllActiveUsers() {
-        // Placeholder: implement logic for active users
-        return appUserRepository.findAll();
-    }
-
-    public void deactivateUser(String id) {
-        // Placeholder: implement logic for deactivating user
-    }
-
-    public long getTotalActiveUsers() {
-        // Placeholder: implement logic for counting active users
-        return appUserRepository.count();
->>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
     }
 }

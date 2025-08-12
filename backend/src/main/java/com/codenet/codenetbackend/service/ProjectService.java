@@ -1,24 +1,18 @@
-package com.codenet.codenetbackend.service;
 
-<<<<<<< HEAD
+
+
+
+
+
 import com.codenet.codenetbackend.model.Project;
 import com.codenet.codenetbackend.repository.ProjectRepository;
-import com.codenet.codenetbackend.exception.ProjectNotFoundException;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-=======
-import com.codenet.codenetbackend.model.Project; 
-import com.codenet.codenetbackend.repository.ProjectRepository; 
-import org.springframework.stereotype.Service; 
-import java.time.Instant; 
-import java.util.List; 
-import java.util.Optional; 
-@Service 
-public class ProjectService { 
->>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
+@Service
+public class ProjectService {
     private final ProjectRepository projectRepository;
 
     public ProjectService(ProjectRepository projectRepository) {
@@ -36,16 +30,17 @@ public class ProjectService {
         });
     }
 
-    public Optional<Project> rejectProject(String id) {
+    public Optional<Project> rejectProject(String id, String reason) {
         return projectRepository.findById(id).map(project -> {
             project.setStatus("REJECTED");
+            // Optionally set rejection reason if field exists
             return projectRepository.save(project);
         });
     }
 
     public Optional<Project> featureProject(String id) {
         return projectRepository.findById(id).map(project -> {
-            project.setStatus("FEATURED");
+            project.setFeatured(true);
             return projectRepository.save(project);
         });
     }
@@ -63,8 +58,7 @@ public class ProjectService {
     }
 
     public long getTotalViews() {
-        // Placeholder: implement if you have a views field
-        return 0;
+        return projectRepository.findAll().stream().mapToLong(Project::getViews).sum();
     }
 
     public long getTotalCollaborators() {
@@ -89,13 +83,6 @@ public class ProjectService {
         project.setLikes(0);
         return projectRepository.save(project);
     }
-<<<<<<< HEAD
-    public Project getProjectByIdOrThrow(String id) {
-        return projectRepository.findById(id)
-            .orElseThrow(() -> new ProjectNotFoundException("Project not found with id: " + id));
-    }
-=======
->>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public Optional<Project> getProjectById(String id) {
         return projectRepository.findById(id);
@@ -113,17 +100,6 @@ public class ProjectService {
     public List<Project> searchProjects(String query) {
         return projectRepository.searchProjects(query);
     }
-<<<<<<< HEAD
-    public Project updateProjectOrThrow(String id, Project updatedProject) {
-        Project project = getProjectByIdOrThrow(id);
-        project.setTitle(updatedProject.getTitle());
-        project.setSubtitle(updatedProject.getSubtitle());
-        project.setDescription(updatedProject.getDescription());
-        project.setMediaUrls(updatedProject.getMediaUrls());
-        return projectRepository.save(project);
-    }
-=======
->>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public Optional<Project> updateProject(String id, Project updatedProject) {
         return projectRepository.findById(id)
@@ -137,15 +113,6 @@ public class ProjectService {
                     return projectRepository.save(project);
                 });
     }
-<<<<<<< HEAD
-    public void deleteProjectOrThrow(String id) {
-        if (!projectRepository.existsById(id)) {
-            throw new ProjectNotFoundException("Project not found with id: " + id);
-        }
-        projectRepository.deleteById(id);
-    }
-=======
->>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public boolean deleteProject(String id) {
         if (projectRepository.existsById(id)) {
@@ -154,14 +121,6 @@ public class ProjectService {
         }
         return false;
     }
-<<<<<<< HEAD
-    public Project likeProjectOrThrow(String id) {
-        Project project = getProjectByIdOrThrow(id);
-        project.setLikes(project.getLikes() + 1);
-        return projectRepository.save(project);
-    }
-=======
->>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6
 
     public Optional<Project> likeProject(String id) {
         return projectRepository.findById(id)
@@ -171,6 +130,45 @@ public class ProjectService {
                 });
     }
 
+    public List<Project> getTrendingProjects() {
+        // Example: top 10 most liked projects
+        return projectRepository.findTop10ByOrderByLikesDesc();
+    }
+
+    public long getTotalProjects() {
+        return projectRepository.count();
+    }
+}
+
+    private final ProjectRepository projectRepository;
+
+    public ProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+
+
+            return projectRepository.save(project);
+            return projectRepository.save(project);
+            return projectRepository.save(project);
+
+
+
+    }
+    }
+    }
+    }
+        project.setStatus("PENDING"); // New projects are pending approval
+    import com.codenet.codenetbackend.model.Project;
+<<<<<<< HEAD
+        return projectRepository.save(project);
+                    project.setSubtitle(updatedProject.getSubtitle());
+                    // project.setStatus(updatedProject.getStatus());
+<<<<<<< HEAD
+        projectRepository.deleteById(id);
+            return true;
+<<<<<<< HEAD
+        return projectRepository.save(project);
+        return projectRepository.findById(id)
+        }
     public List<Project> getTrendingProjects() {
         // Example: top 10 most liked projects
         return projectRepository.findTop10ByOrderByLikesDesc();
