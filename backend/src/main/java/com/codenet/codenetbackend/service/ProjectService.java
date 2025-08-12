@@ -2,6 +2,7 @@ package com.codenet.codenetbackend.service;
 
 import com.codenet.codenetbackend.model.Project;
 import com.codenet.codenetbackend.repository.ProjectRepository;
+import com.codenet.codenetbackend.exception.ProjectNotFoundException;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
@@ -20,6 +21,11 @@ public class ProjectService {
         project.setLikes(0);
         return projectRepository.save(project);
     }
+    public Project getProjectByIdOrThrow(String id) {
+        return projectRepository.findById(id)
+            .orElseThrow(() -> new ProjectNotFoundException("Project not found with id: " + id));
+    }
+
     public Optional<Project> getProjectById(String id) {
         return projectRepository.findById(id);
     }
@@ -32,6 +38,15 @@ public class ProjectService {
     public List<Project> searchProjects(String query) {
         return projectRepository.searchProjects(query);
     }
+    public Project updateProjectOrThrow(String id, Project updatedProject) {
+        Project project = getProjectByIdOrThrow(id);
+        project.setTitle(updatedProject.getTitle());
+        project.setSubtitle(updatedProject.getSubtitle());
+        project.setDescription(updatedProject.getDescription());
+        project.setMediaUrls(updatedProject.getMediaUrls());
+        return projectRepository.save(project);
+    }
+
     public Optional<Project> updateProject(String id, Project updatedProject) {
         return projectRepository.findById(id)
             .map(project -> {
@@ -42,6 +57,13 @@ public class ProjectService {
                 return projectRepository.save(project);
             });
     }
+    public void deleteProjectOrThrow(String id) {
+        if (!projectRepository.existsById(id)) {
+            throw new ProjectNotFoundException("Project not found with id: " + id);
+        }
+        projectRepository.deleteById(id);
+    }
+
     public boolean deleteProject(String id) {
         if (projectRepository.existsById(id)) {
             projectRepository.deleteById(id);
@@ -49,6 +71,12 @@ public class ProjectService {
         }
         return false;
     }
+    public Project likeProjectOrThrow(String id) {
+        Project project = getProjectByIdOrThrow(id);
+        project.setLikes(project.getLikes() + 1);
+        return projectRepository.save(project);
+    }
+
     public Optional<Project> likeProject(String id) {
         return projectRepository.findById(id)
             .map(project -> {
@@ -91,5 +119,38 @@ public class ProjectService {
     
     public long getApprovedProjectsCount() {
         return projectRepository.findByStatus("APPROVED").size();
+    }
+    
+    // Additional missing methods
+    public List<Project> getProjectsByStatus(String status) {
+        return projectRepository.findByStatus(status);
+    }
+    
+    public Optional<Project> featureProject(String id) {
+        return projectRepository.findById(id)
+            .map(project -> {
+                project.setFeatured(true);
+                return projectRepository.save(project);
+            });
+    }
+    
+    public long getTotalApprovedProjects() {
+        return projectRepository.findByStatus("APPROVED").size();
+    }
+    
+    public long getTotalPendingProjects() {
+        return projectRepository.findByStatus("PENDING").size();
+    }
+    
+    public long getTotalLikes() {
+        return projectRepository.findAll().stream()
+            .mapToLong(Project::getLikes)
+            .sum();
+    }
+    
+    public long getTotalViews() {
+        return projectRepository.findAll().stream()
+            .mapToLong(Project::getViews)
+            .sum();
     }
 }

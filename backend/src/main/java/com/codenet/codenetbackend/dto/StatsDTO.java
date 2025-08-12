@@ -5,8 +5,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class StatsDTO {
-    private long projectsUploaded;
-    private long users;
-    private long soldProjects;
-    private long collaborators;
+    private long totalProjects;
+    private long totalPendingProjects;
+    private long totalUsers;
+    private long totalLikes;
+    private long totalViews;
 }

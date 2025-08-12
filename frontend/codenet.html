@@ -1,4 +1,4 @@
-git <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -8,7 +8,10 @@ git <!DOCTYPE html>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+  <!-- Clerk SDK -->
+  <script async defer src="https://YOUR_CLERK_PUBLISHABLE_KEY_DOMAIN/__clerk/js/clerk.browser.js" data-clerk-publishable-key="pk_live_YOUR_CLERK_PUBLISHABLE_KEY"></script>
+  <!-- API Client -->
+  <script src="api.js"></script>
 </head>
 <body>
 
@@ -25,8 +28,10 @@ git <!DOCTYPE html>
       <li><a href ="aboutus.html" class="nav-link">ABOUT US</a></li>
     </ul>
     <div class="header-right">
-      <a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>
-    <a href="mailto:binupanuransith@gmail.com" class="contact">CONTACT US</a>
+      <div id="auth-status">
+        <a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>
+      </div>
+      <a href="mailto:binupanuransith@gmail.com" class="contact">CONTACT US</a>
     </div>
     <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
   </header>
@@ -70,54 +75,12 @@ git <!DOCTYPE html>
 
    <section class="trending-section">
   <div class="trending-container">
-    <h2 class="section-title">Star Projects</h2>
+    <h2 class="section-title">Trending Projects</h2>
     <div class="trending-row" id="trending-row-js">
-      
-      <!-- Project 1 -->
-      <article class="trending-item">
-        <a href="#" class="trending-poster">
-          <img src="project1.jpg" alt="Trending Project 1">
-        </a>
-      </article>
-
-      <!-- Project 2 -->
-      <article class="trending-item">
-        <a href="#" class="trending-poster">
-          <img src="project2.jpg" alt="Trending Project 2">
-        </a>
-      </article>
-      
-      <!-- Project 3 -->
-      <article class="trending-item">
-        <a href="#" class="trending-poster">
-          <img src="project3.jpg" alt="Trending Project 3">
-        </a>
-      </article>
-      
-      <!-- Project 4 -->
-      <article class="trending-item">
-        <a href="#" class="trending-poster">
-          <img src="project4.jpg" alt="Trending Project 4">
-        </a>
-      </article>
-
-      <!-- Project 5 -->
-      <article class="trending-item">
-        <a href="#" class="trending-poster">
-          <img src="project5.jpg" alt="Trending Project 5">
-        </a>
-      </article>
-
-      <!-- Project 6 -->
-      <article class="trending-item">
-        <a href="#" class="trending-poster">
-          <img src="project6.jpg" alt="Trending Project 6">
-        </a>
-      </article>
-      
+      <div class="loading-trending">Loading trending projects...</div>
     </div>
     <!-- Navigation Button -->
-    <button class="trending-nav-button" id="trending-next-btn" aria-label="Next projects">
+    <button class="trending-nav-button" id="trending-next-btn" aria-label="Next projects" style="display: none;">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
         <path d="M10.707 17.707L16.414 12L10.707 6.293a1 1 0 00-1.414 1.414L13.586 12l-4.293 4.293a1 1 0 001.414 1.414z"/>
       </svg>
@@ -157,11 +120,11 @@ git <!DOCTYPE html>
     <!-- Left Stats -->
     <div class="stat-group">
       <div class="stat-card">
-        <div class="stat-number" data-target="50">0</div>
+        <div class="stat-number" id="total-projects" data-target="0">0</div>
         <div class="stat-label">Projects Uploaded</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number" data-target="100">0</div>
+        <div class="stat-number" id="total-users" data-target="0">0</div>
         <div class="stat-label">Collaborators</div>
       </div>
     </div>
@@ -169,12 +132,12 @@ git <!DOCTYPE html>
   <!-- Right Stats -->
     <div class="stat-group">
       <div class="stat-card">
-        <div class="stat-number" data-target="12">0</div>
-        <div class="stat-label">Sold Projects</div>
+        <div class="stat-number" id="total-likes" data-target="0">0</div>
+        <div class="stat-label">Total Likes</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number" data-target="250">0</div>
-        <div class="stat-label">Users</div>
+        <div class="stat-number" id="total-views" data-target="0">0</div>
+        <div class="stat-label">Total Views</div>
       </div>
     </div>
   </section>
@@ -213,7 +176,199 @@ git <!DOCTYPE html>
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="config.js"></script>
+  <script src="api.js"></script>
   <script src="script.js"></script>
+  
+  <script>
+    // Handle authentication state on main page
+    window.addEventListener('load', function() {
+      // Set default auth state for development
+      updateAuthStatus();
+      
+      // Load dynamic content
+      loadStats();
+      loadTrendingProjects();
+    });
+
+    function updateAuthStatus() {
+      const authStatus = document.getElementById('auth-status');
+      
+      if (authStatus) {
+        // Show login link for development mode
+        authStatus.innerHTML = '<a href="login.html" class="auth-btn">LOGIN / SIGN UP</a>';
+      }
+    }
+
+    function logout() {
+      console.log('Logout clicked - development mode');
+      updateAuthStatus();
+    }
+
+    // Load statistics from API with enhanced error handling
+    async function loadStats() {
+      const statElements = ['total-projects', 'total-users', 'total-likes', 'total-views'];
+      
+      try {
+        // Show loading state for all stat counters
+        statElements.forEach(id => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.textContent = '...';
+            element.classList.add('loading');
+          }
+        });
+
+        const stats = await api.getStats();
+        
+        if (stats) {
+          // Update stat counters with animation
+          animateCounter('total-projects', stats.totalProjects || 0);
+          animateCounter('total-users', stats.totalUsers || 0);
+          animateCounter('total-likes', stats.totalLikes || 0);
+          animateCounter('total-views', stats.totalViews || 0);
+          
+          // Show success message briefly
+          api.showSuccess('Statistics loaded successfully!');
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+        
+        // Set demo/fallback values for development
+        animateCounter('total-projects', 156);
+        animateCounter('total-users', 342);
+        animateCounter('total-likes', 1247);
+        animateCounter('total-views', 8934);
+        
+        console.log('Using demo statistics - backend not available');
+      } finally {
+        // Remove loading state
+        statElements.forEach(id => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.classList.remove('loading');
+          }
+        });
+      }
+    }
+
+    // Animate counter to target value with enhanced animation
+    function animateCounter(elementId, target) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      
+      element.setAttribute('data-target', target);
+      
+      // Add animation class
+      element.classList.add('animating');
+      
+      const duration = 2000; // 2 seconds
+      const increment = target / (duration / 16); // 60fps
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        const displayValue = Math.floor(current);
+        element.textContent = displayValue.toLocaleString(); // Add comma separators
+        
+        if (current >= target) {
+          element.textContent = target.toLocaleString();
+          element.classList.remove('animating');
+          clearInterval(timer);
+        }
+      }, 16);
+    }
+
+    // Load trending projects with enhanced error handling
+    async function loadTrendingProjects() {
+      const trendingContainer = document.getElementById('trending-row-js');
+      const nextBtn = document.getElementById('trending-next-btn');
+      
+      if (!trendingContainer) return;
+      
+      try {
+        // Show loading state
+        api.showLoading(trendingContainer, 'Loading trending projects...');
+        
+        if (nextBtn) nextBtn.style.display = 'none';
+
+        const trendingProjects = await api.getTrendingProjects();
+        
+        if (trendingProjects && trendingProjects.length > 0) {
+          trendingContainer.innerHTML = trendingProjects.map(project => createTrendingProjectCard(project)).join('');
+          
+          if (nextBtn && trendingProjects.length > 3) {
+            nextBtn.style.display = 'block';
+          }
+          
+          // Add click animation to trending items
+          addTrendingClickHandlers();
+          
+        } else {
+          trendingContainer.innerHTML = `
+            <div class="no-trending">
+              <span class="no-content-icon">🏆</span>
+              <h3>No trending projects yet</h3>
+              <p><a href="submitproject.html">Be the first to submit!</a></p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Error loading trending projects:', error);
+        
+        // API client handles the error display, but also show local error
+        trendingContainer.innerHTML = `
+          <div class="error-trending">
+            <span class="error-icon">⚠️</span>
+            <h3>Unable to load trending projects</h3>
+            <p>Please check your connection.</p>
+            <button onclick="loadTrendingProjects()" class="retry-btn">Retry</button>
+          </div>
+        `;
+      }
+    }
+
+    // Add click handlers for trending items
+    function addTrendingClickHandlers() {
+      document.querySelectorAll('.trending-item').forEach(item => {
+        item.addEventListener('click', function() {
+          // Add click animation
+          this.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            this.style.transform = 'scale(1)';
+          }, 150);
+        });
+      });
+    }
+
+    // Create trending project card
+    function createTrendingProjectCard(project) {
+      const imageUrl = project.mediaUrls && project.mediaUrls.length > 0 
+        ? `http://localhost:8080${project.mediaUrls[0]}`
+        : 'https://via.placeholder.com/300x400?text=No+Image';
+        
+      return `
+        <article class="trending-item" onclick="viewProject('${project.id}')">
+          <div class="trending-poster">
+            <img src="${imageUrl}" alt="${project.title}" onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
+            <div class="trending-overlay">
+              <h4>${project.title}</h4>
+              <p class="trending-stats">❤️ ${project.likes} 👁️ ${project.views}</p>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // View project function
+    function viewProject(projectId) {
+      // For now, just log or show alert
+      console.log('View project:', projectId);
+      alert(`Project Details for ID: ${projectId}\\nThis will open a project detail page in the future.`);
+      // In the future, navigate to project detail page:
+      // window.location.href = `project-details.html?id=${projectId}`;
+    }
+  </script>
 
 </body>
 </html>

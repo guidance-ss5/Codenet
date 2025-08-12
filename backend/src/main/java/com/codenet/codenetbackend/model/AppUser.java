@@ -13,4 +13,5 @@ public class AppUser {
     private String username;
     private Instant joinedAt;
     private String role;
+    private boolean isActive = true;
 }

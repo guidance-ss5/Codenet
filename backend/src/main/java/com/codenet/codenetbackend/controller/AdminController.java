@@ -44,7 +44,7 @@ public class AdminController {
 
     @PutMapping("/projects/{id}/reject")
     public ResponseEntity<Project> rejectProject(@PathVariable String id) {
-        return projectService.rejectProject(id)
+        return projectService.rejectProject(id, "Rejected by admin")
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
