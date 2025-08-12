@@ -1,8 +1,4 @@
-
-
-
-
-
+package com.codenet.codenetbackend.service;
 
 import com.codenet.codenetbackend.model.Project;
 import com.codenet.codenetbackend.repository.ProjectRepository;
@@ -81,6 +77,7 @@ public class ProjectService {
         project.setUploadDate(Instant.now());
         project.setStatus("PENDING"); // New projects are pending approval
         project.setLikes(0);
+        project.setViews(0);
         return projectRepository.save(project);
     }
 
@@ -139,107 +136,3 @@ public class ProjectService {
         return projectRepository.count();
     }
 }
-
-    private final ProjectRepository projectRepository;
-
-    public ProjectService(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-
-
-            return projectRepository.save(project);
-            return projectRepository.save(project);
-            return projectRepository.save(project);
-
-
-
-    }
-    }
-    }
-    }
-        project.setStatus("PENDING"); // New projects are pending approval
-    import com.codenet.codenetbackend.model.Project;
-<<<<<<< HEAD
-        return projectRepository.save(project);
-                    project.setSubtitle(updatedProject.getSubtitle());
-                    // project.setStatus(updatedProject.getStatus());
-<<<<<<< HEAD
-        projectRepository.deleteById(id);
-            return true;
-<<<<<<< HEAD
-        return projectRepository.save(project);
-        return projectRepository.findById(id)
-        }
-    public List<Project> getTrendingProjects() {
-        // Example: top 10 most liked projects
-        return projectRepository.findTop10ByOrderByLikesDesc();
-    }
-
-    // You'll need other methods for stats, e.g., getTotalProjects(), getTotalUsers()
-    public long getTotalProjects() {
-        return projectRepository.count();
-    }
-
-    public long getTotalUsers() {
-        // This count should come from your AppUser repository, not projects
-        return 0; // Placeholder, implement in AppUserService or a dedicated StatService
-    }
-
-    public long getSoldProjects() {
-        // This assumes a 'sold' flag or status in Project model
-        return 0; // Placeholder
-    }
-<<<<<<< HEAD
-    
-    public Optional<Project> rejectProject(String id, String reason) {
-        return projectRepository.findById(id)
-            .map(project -> {
-                project.setStatus("REJECTED");
-                // You could add a rejection reason field to the Project model
-                return projectRepository.save(project);
-            });
-    }
-    
-    public long getPendingProjectsCount() {
-        return projectRepository.findByStatus("PENDING").size();
-    }
-    
-    public long getApprovedProjectsCount() {
-        return projectRepository.findByStatus("APPROVED").size();
-    }
-    
-    // Additional missing methods
-    public List<Project> getProjectsByStatus(String status) {
-        return projectRepository.findByStatus(status);
-    }
-    
-    public Optional<Project> featureProject(String id) {
-        return projectRepository.findById(id)
-            .map(project -> {
-                project.setFeatured(true);
-                return projectRepository.save(project);
-            });
-    }
-    
-    public long getTotalApprovedProjects() {
-        return projectRepository.findByStatus("APPROVED").size();
-    }
-    
-    public long getTotalPendingProjects() {
-        return projectRepository.findByStatus("PENDING").size();
-    }
-    
-    public long getTotalLikes() {
-        return projectRepository.findAll().stream()
-            .mapToLong(Project::getLikes)
-            .sum();
-    }
-    
-    public long getTotalViews() {
-        return projectRepository.findAll().stream()
-            .mapToLong(Project::getViews)
-            .sum();
-    }
-}
-=======
-}
->>>>>>> 11e31b094d35e41ab12c0ca0f6c664d80fe3b4b6

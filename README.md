@@ -21,6 +21,38 @@ A comprehensive platform for developers to showcase, share, and discover coding 
                          └──────────────────┘            
 ```
 
+## ✅ **Recent Improvements & Fixes**
+
+### **Resolved Issues:**
+1. **Merge Conflicts Fixed:**
+   - ✅ ProjectController.java - All conflicts resolved
+   - ✅ submitproject.html - Form structure cleaned up
+   - ✅ codenet.css - CSS variables unified
+   - ✅ application.properties - Configuration merged
+
+2. **Empty Files Completed:**
+   - ✅ UserRepository.java - MongoDB repository interface
+   - ✅ User.java - User model with Lombok
+   - ✅ LoginRequest.java - Authentication DTO
+   - ✅ AuthController.java - Basic auth endpoints
+   - ✅ AuthService.java - Authentication service
+   - ✅ Dockerfile - Spring Boot containerization
+   - ✅ main.bal - Ballerina webhook service
+
+3. **Security Improvements:**
+   - ✅ JWT validation service implemented
+   - ✅ CORS configuration updated
+   - ✅ Security headers configured
+   - ✅ Rate limiting implemented
+   - ✅ Webhook signature verification (simplified)
+
+### **Current Status:**
+- **Frontend:** ✅ Ready for development
+- **Backend:** ⚠️ Some compilation issues with Lombok
+- **Webhook Service:** ⚠️ Ballerina syntax needs review
+- **Database:** ✅ MongoDB configuration ready
+- **Authentication:** ✅ Clerk integration configured
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -98,242 +130,118 @@ npx live-server  # Node.js way
 ### Application Profiles
 
 - **`dev`**: Development with debug logging
-- **`staging`**: Staging environment with reduced logging
-- **`prod`**: Production with security headers and minimal logging
+- **`prod`**: Production with optimized settings
 
-## 📋 API Documentation
+## 🚨 **Remaining Issues to Address**
 
-### Authentication
-All protected endpoints require Bearer token in Authorization header:
+### **Critical (Must Fix):**
+1. **Backend Compilation:**
+   - Lombok annotation processing issues
+   - Missing getter/setter methods in Project model
+   - ProjectService method signature mismatches
+
+2. **Ballerina Webhook:**
+   - Syntax errors in main.bal
+   - Need to verify Ballerina version compatibility
+   - Webhook signature verification implementation
+
+### **Important (Should Fix):**
+1. **Security Hardening:**
+   - Move sensitive keys to environment variables
+   - Implement proper webhook signature verification
+   - Add input validation and sanitization
+
+2. **Error Handling:**
+   - Consistent error responses across all endpoints
+   - Proper logging configuration
+   - User-friendly error messages
+
+3. **Testing:**
+   - Unit tests for critical components
+   - Integration tests for API endpoints
+   - End-to-end testing
+
+### **Enhancement (Nice to Have):**
+1. **Performance:**
+   - Implement caching for frequently accessed data
+   - Optimize database queries
+   - Add pagination for large datasets
+
+2. **User Experience:**
+   - Better loading states
+   - Improved error messages
+   - Mobile responsiveness improvements
+
+## 📁 Project Structure
+
 ```
-Authorization: Bearer <clerk_jwt_token>
+Codenet/
+├── frontend/                 # Static HTML/CSS/JS
+│   ├── *.html              # Main pages
+│   ├── codenet.css         # Styles
+│   ├── api.js              # API client
+│   └── config.js           # Environment config
+├── backend/                 # Spring Boot API
+│   ├── src/main/java/
+│   │   └── com/codenet/codenetbackend/
+│   │       ├── controller/ # REST endpoints
+│   │       ├── service/    # Business logic
+│   │       ├── repository/ # Data access
+│   │       ├── model/      # Data models
+│   │       └── config/     # Configuration
+│   └── pom.xml
+├── clerk_webhook_listener/  # Ballerina webhook service
+│   └── main.bal
+├── docker-compose.yml       # Container orchestration
+└── README.md
 ```
-
-### Main Endpoints
-
-#### Projects
-- `GET /api/projects/trending` - Get trending projects
-- `GET /api/projects/search?q={query}` - Search projects
-- `GET /api/projects/stats` - Get platform statistics
-- `POST /api/projects` - Create new project (Auth required)
-- `GET /api/projects/my` - Get user's projects (Auth required)
-- `POST /api/projects/{id}/like` - Like a project (Auth required)
-
-#### Users
-- `POST /api/users/sync` - Sync user from Clerk webhook
-- `GET /api/users/profile` - Get user profile (Auth required)
-
-#### Admin
-- `GET /api/admin/projects/pending` - Get pending projects (Admin only)
-- `POST /api/admin/projects/{id}/approve` - Approve project (Admin only)
-
-## 🐳 Docker Deployment
-
-### Development
-```bash
-docker-compose up --build
-```
-
-### Production
-```bash
-# Set production environment
-export SPRING_PROFILES_ACTIVE=prod
-
-# Deploy with production overrides
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-```
-
-### Services
-
-| Service | Port | Description |
-|---------|------|-------------|
-| Backend | 8080 | Spring Boot API |
-| MongoDB | 27017 | Database |
-| Webhook | 9090 | Ballerina webhook service |
-| Nginx | 80/443 | Frontend server (production) |
 
 ## 🔒 Security Features
 
-### Backend Security
 - **JWT Authentication** with Clerk integration
-- **CORS Configuration** with environment-specific origins
-- **Rate Limiting** (100 requests/minute default)
-- **Input Validation** with Jakarta Bean Validation
+- **CORS Configuration** for cross-origin requests
+- **Rate Limiting** to prevent abuse
+- **Input Validation** with Bean Validation
 - **Security Headers** (HSTS, X-Frame-Options, etc.)
-- **File Upload Validation** (size, type restrictions)
+- **Webhook Signature Verification** (simplified)
 
-### Frontend Security
-- **Environment-based Configuration**
-- **XSS Protection** through content sanitization
-- **Rate Limiting** awareness and retry logic
-- **Secure Token Handling**
+## 🚀 Deployment
 
-## 📊 Performance & Monitoring
-
-### Health Checks
-- **Backend**: `http://localhost:8080/actuator/health`
-- **MongoDB**: Connection validation
-- **File System**: Upload directory access
-
-### Monitoring
-- **Application Metrics** via Spring Actuator
-- **Error Tracking** with structured logging
-- **Performance Monitoring** (configurable)
-
-## 🧪 Testing
-
-### Backend Tests
-```bash
-cd backend
-./mvnw test
-```
-
-### Integration Tests
-```bash
-./mvnw verify
-```
-
-### Load Testing
-```bash
-# Using Apache Bench
-ab -n 1000 -c 10 http://localhost:8080/api/projects/trending
-
-# Using curl for specific endpoints
-curl -X GET http://localhost:8080/actuator/health
-```
-
-## 🚀 Deployment Strategies
-
-### 1. Local Development
-```bash
-./deploy.sh dev
-```
-
-### 2. Docker Compose (Recommended)
+### Docker Compose (Recommended)
 ```bash
 docker-compose up -d
 ```
 
-### 3. Kubernetes
-```bash
-kubectl apply -f k8s/
-```
+### Manual Deployment
+1. Build backend: `./mvnw clean package`
+2. Start MongoDB
+3. Run backend: `java -jar target/codenetbackend-1.0.0.jar`
+4. Serve frontend with any static file server
 
-### 4. Cloud Deployment
+## 📝 API Documentation
 
-#### AWS Elastic Beanstalk
-1. Build JAR: `./mvnw clean package`
-2. Upload to Elastic Beanstalk
-3. Configure environment variables
-
-#### Heroku
-```bash
-heroku create codenet-app
-heroku config:set SPRING_PROFILES_ACTIVE=prod
-git push heroku main
-```
-
-#### Railway
-```bash
-railway login
-railway init
-railway up
-```
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### 1. MongoDB Connection Failed
-```bash
-# Check MongoDB status
-docker-compose logs mongodb
-
-# Restart MongoDB
-docker-compose restart mongodb
-```
-
-#### 2. CORS Errors
-```bash
-# Update CORS configuration in application.properties
-spring.web.cors.allowed-origins=http://localhost:3000,https://yourdomain.com
-```
-
-#### 3. File Upload Errors
-```bash
-# Check upload directory permissions
-ls -la uploads/
-chmod 755 uploads/
-
-# Check file size limits
-# Update in application.properties:
-spring.servlet.multipart.max-file-size=10MB
-```
-
-#### 4. Rate Limiting Issues
-```bash
-# Increase rate limits in RateLimitingFilter.java
-# Or add IP to whitelist
-```
-
-### Logs Access
-```bash
-# Backend logs
-docker-compose logs -f backend
-
-# All services
-docker-compose logs -f
-
-# Specific timeframe
-docker-compose logs --since="2h" backend
-```
-
-## 🔄 CI/CD Pipeline
-
-### GitHub Actions
-- **Automated Testing** on push/PR
-- **Security Scanning** with Trivy
-- **Docker Build** and push to registry
-- **Deployment** to staging/production
-
-### Pipeline Stages
-1. **Test** - Backend and frontend tests
-2. **Build** - Maven build and Docker images
-3. **Security** - Vulnerability scanning
-4. **Deploy** - Automated deployment
+Once the backend is running, visit:
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- **API Docs**: `http://localhost:8080/v3/api-docs`
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-### Development Guidelines
-- Follow Java Spring Boot best practices
-- Use meaningful commit messages
-- Add tests for new features
-- Update documentation
+## 📄 License
 
-## 📝 License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 🆘 Support
 
-## 🙏 Acknowledgments
-
-- **Spring Boot** - Backend framework
-- **MongoDB** - Database
-- **Clerk** - Authentication service
-- **Ballerina** - Webhook service
-- **Docker** - Containerization
-
-## 📞 Support
-
-- **Documentation**: Check this README and inline code comments
-- **Issues**: Create GitHub issues for bugs/features
-- **Discussions**: Use GitHub Discussions for questions
+For support and questions:
+- **Email**: binupanuransith@gmail.com
+- **Phone**: +94-77-483-7197
 
 ---
 
-**Happy Coding! 🚀**
+**Note**: This project is currently in development. Some features may not be fully functional until the remaining issues are resolved.
